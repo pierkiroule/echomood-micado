@@ -110,6 +110,12 @@ h1 {
   line-height: 1.12;
 }
 
+h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.15;
+}
+
 .soft {
   margin: clamp(6px, 1.5vh, 12px) auto 0;
   max-width: 340px;
@@ -147,6 +153,13 @@ h1 {
   animation-delay: var(--delay);
   box-shadow: 0 18px 60px rgba(0,0,0,.30);
   touch-action: manipulation;
+}
+
+.bubble-add {
+  border-style: dashed;
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,.14), transparent 25%),
+    rgba(15,23,42,.54);
 }
 
 .bubble-emoji {
@@ -372,6 +385,63 @@ h1 {
   opacity: .28;
   cursor: not-allowed;
   filter: grayscale(1);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2,6,23,.74);
+  backdrop-filter: blur(10px);
+}
+
+.custom-modal {
+  width: min(100%, 360px);
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(15,23,42,.96);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+}
+
+.custom-modal label {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.custom-modal input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 14px;
+  padding: 12px 13px;
+  background: rgba(2,6,23,.82);
+  color: white;
+  font: inherit;
+  outline: 0;
+}
+
+.custom-modal input:focus {
+  border-color: #67e8f9;
+  box-shadow: 0 0 0 3px rgba(103,232,249,.16);
+}
+
+.modal-hint {
+  margin: 10px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 

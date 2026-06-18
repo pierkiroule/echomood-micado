@@ -83,12 +83,24 @@ const POSITIONS = [
   { left: '73%', top: '28%', delay: '.8s' },
   { left: '28%', top: '70%', delay: '1.4s' },
   { left: '72%', top: '70%', delay: '.3s' },
+  { left: '50%', top: '50%', delay: '.6s' },
 ]
+
+const EMPTY_CUSTOM_ITEMS = {
+  world: null,
+  inside: null,
+  supports: null,
+  missing: null,
+  star: null,
+}
 
 export default function App() {
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
+  const [customItems, setCustomItems] = useState(EMPTY_CUSTOM_ITEMS)
+  const [customModalStep, setCustomModalStep] = useState(null)
   const current = STEPS[stepIndex]
+  const currentItems = getStepItems(current, customItems)
 
   function toggle(id) {
     if (current.single) {
@@ -105,6 +117,33 @@ export default function App() {
   function reset() {
     setStepIndex(0)
     setAnswers({})
+    setCustomItems(EMPTY_CUSTOM_ITEMS)
+    setCustomModalStep(null)
+  }
+
+  function openCustomModal() {
+    setCustomModalStep(current.id)
+  }
+
+  function saveCustomItem(stepId, item) {
+    const customId = `custom-${stepId}`
+
+    setCustomItems(prev => ({
+      ...prev,
+      [stepId]: {
+        id: customId,
+        emoji: item.emoji,
+        label: item.label,
+      },
+    }))
+
+    setAnswers(prev => ({
+      ...prev,
+      [customId]: 1,
+      ...(stepId === 'star' ? { star: customId } : {}),
+    }))
+
+    setCustomModalStep(null)
   }
 
   function getCurrentStepHasAnswer() {
@@ -112,7 +151,7 @@ export default function App() {
       return Boolean(answers.star)
     }
 
-    return current.items.some(([id]) => (answers[id] || 0) > 0)
+    return currentItems.some(([id]) => (answers[id] || 0) > 0)
   }
 
   function canGoNext() {
@@ -120,7 +159,7 @@ export default function App() {
   }
 
   if (stepIndex >= STEPS.length) {
-    return <Reveal answers={answers} onReset={reset} />
+    return <Reveal answers={answers} customItems={customItems} onReset={reset} />
   }
 
   return (
@@ -143,7 +182,13 @@ export default function App() {
         <p className="soft">Tapote une bulle. Plus le halo grandit, plus ça résonne.</p>
       </section>
 
-      <FloatingBubbles step={current} answers={answers} onTap={toggle} />
+      <FloatingBubbles
+        step={current}
+        items={currentItems}
+        answers={answers}
+        onCustomTap={openCustomModal}
+        onTap={toggle}
+      />
 
       <section className="nav">
         <button className="secondary" onClick={() => setStepIndex(v => Math.max(0, v - 1))} disabled={stepIndex === 0}>
@@ -157,22 +202,31 @@ export default function App() {
           {stepIndex === 4 ? 'Révéler' : 'Suivant'}
         </button>
       </section>
+
+      {customModalStep && (
+        <CustomItemModal
+          initialItem={customItems[customModalStep]}
+          onCancel={() => setCustomModalStep(null)}
+          onSave={item => saveCustomItem(customModalStep, item)}
+        />
+      )}
     </main>
   )
 }
 
-function FloatingBubbles({ step, answers, onTap }) {
+function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
   return (
     <div className="bubble-stage">
-      {step.items.map(([id, emoji, label], index) => {
+      {items.map(([id, emoji, label, type], index) => {
         const level = step.single ? (answers.star === id ? 3 : 0) : answers[id] || 0
         const pos = POSITIONS[index]
+        const isAddCustom = type === 'add-custom'
 
         return (
           <button
             key={id}
-            className={`bubble level-${level}`}
-            onClick={() => onTap(id)}
+            className={`bubble ${isAddCustom ? 'bubble-add' : ''} level-${level}`}
+            onClick={() => isAddCustom ? onCustomTap() : onTap(id)}
             style={{
               '--x': pos.left,
               '--y': pos.top,
@@ -195,8 +249,55 @@ function FloatingBubbles({ step, answers, onTap }) {
   )
 }
 
-function Reveal({ answers, onReset }) {
-  const nodes = getActiveNodes(answers)
+function CustomItemModal({ initialItem, onCancel, onSave }) {
+  const [emoji, setEmoji] = useState(initialItem?.emoji || '')
+  const [label, setLabel] = useState(initialItem?.label || '')
+  const cleanLabel = label.trim().slice(0, 20)
+  const cleanEmoji = emoji.trim().slice(0, 4)
+  const canSave = cleanEmoji.length > 0 && cleanLabel.length > 0
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    if (!canSave) return
+    onSave({ emoji: cleanEmoji, label: cleanLabel })
+  }
+
+  return (
+    <div className="modal-backdrop" role="presentation">
+      <form className="custom-modal" onSubmit={handleSubmit} aria-label="Ajouter une bulle personnalisée">
+        <p className="kicker">Autre bulle</p>
+        <h2>Ajouter ce qui manque</h2>
+        <label>
+          Emoji
+          <input
+            value={emoji}
+            onChange={event => setEmoji(event.target.value)}
+            placeholder="🌙"
+            maxLength={4}
+            autoFocus
+          />
+        </label>
+        <label>
+          Mot court
+          <input
+            value={label}
+            onChange={event => setLabel(event.target.value.slice(0, 20))}
+            placeholder="Ton mot"
+            maxLength={20}
+          />
+        </label>
+        <p className="modal-hint">{cleanLabel.length}/20 caractères · local uniquement</p>
+        <div className="modal-actions">
+          <button className="secondary" type="button" onClick={onCancel}>Annuler</button>
+          <button className="primary" type="submit" disabled={!canSave}>Valider</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+function Reveal({ answers, customItems, onReset }) {
+  const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
 
   return (
@@ -425,13 +526,31 @@ function positionNodes(nodes) {
   return result
 }
 
-function getActiveNodes(answers) {
+function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
+  const customItem = customItems[step.id]
+  const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
+
+  if (!customItem) {
+    return [...step.items, addCustomItem]
+  }
+
+  return [
+    ...step.items,
+    [customItem.id, customItem.emoji, customItem.label, 'custom'],
+  ]
+}
+
+function getActiveNodes(answers, customItems = {}) {
   const nodes = []
 
   for (const step of STEPS) {
+    const items = getStepItems(step, customItems).filter(([, , , type]) => type !== 'add-custom')
+
     if (step.id === 'star') {
       if (answers.star) {
-        const item = step.items.find(i => i[0] === answers.star)
+        const item = items.find(i => i[0] === answers.star)
+        if (!item) continue
+
         nodes.push({
           id: answers.star,
           emoji: item[1],
@@ -446,7 +565,7 @@ function getActiveNodes(answers) {
       continue
     }
 
-    for (const [id, emoji, label] of step.items) {
+    for (const [id, emoji, label] of items) {
       const level = answers[id] || 0
       if (level > 0) {
         nodes.push({
