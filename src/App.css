@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+:root {
+  --bg-dark: #0f172a;
+  --text-light: #f1f5f9;
+  --accent-indigo: #6366f1;
+  --accent-soft: rgba(99, 102, 241, 0.2);
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background spatial */
+.bg-stellar {
+  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-stellar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(white 1px, transparent 0);
+  background-size: 40px 40px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes pulse-halo {
+  0%, 100% { transform: scale(1); opacity: 0.5; filter: blur(8px); }
+  50% { transform: scale(1.15); opacity: 0.2; filter: blur(12px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.halo-animation {
+  animation: pulse-halo 4s ease-in-out infinite;
+  background: radial-gradient(circle, var(--accent-indigo) 0%, transparent 70%);
+}
+
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Constellation Specific */
+.constellation-container {
+  perspective: 1000px;
+}
+
+.star-item {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
+}
+
+.star-item:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+}
+
+.resonance-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.step-indicator {
+  height: 4px;
+  width: 24px;
+  border-radius: 2px;
+  background-color: rgba(99, 102, 241, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.step-indicator.active {
+  background-color: var(--accent-indigo);
+}
+
+.emoji-card {
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+}
+
+.emoji-card.selected {
+  background-color: var(--accent-soft);
+}
+
+.resonance-label {
+  position: absolute;
+  bottom: -1rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(99, 102, 241, 0.6);
+  font-weight: 500;
+  white-space: nowrap;
+}
