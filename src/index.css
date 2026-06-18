@@ -258,15 +258,18 @@ h2 {
 }
 
 .reveal-page {
+  display: block;
+  height: 100dvh;
+  max-height: none;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
 }
 
 .reveal-card {
   width: 100%;
   max-width: 470px;
-  margin: auto;
+  margin: 0 auto;
   text-align: center;
   padding: clamp(16px, 4vw, 22px);
   border-radius: 30px;

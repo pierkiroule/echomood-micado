@@ -527,7 +527,7 @@ function positionNodes(nodes) {
 }
 
 function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
-  const customItem = customItems[step.id]
+  const customItem = customItems?.[step.id]
   const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
 
   if (!customItem) {
