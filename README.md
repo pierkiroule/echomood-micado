@@ -1,16 +1,41 @@
-# React + Vite
+# Kosmoji MICADO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Kosmoji MICADO est une application React/Vite qui aide une personne à représenter son « Kosmos intérieur » du jour à travers des astres, des climats émotionnels, des satellites-refuges, des besoins et une résonance à explorer.
 
-Currently, two official plugins are available:
+L'application est pensée comme un support de dialogue : elle ne pose pas de diagnostic, ne remplace pas un professionnel de santé et ne prétend pas dire la vérité sur l'utilisateur.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Fonctionnalités
 
-## React Compiler
+- Parcours guidé en 5 étapes.
+- Sélection d'intensité sur les bulles émotionnelles.
+- Ajout d'une bulle personnalisée par étape.
+- Révélation d'une constellation du jour.
+- Questions de résonance issues d'une banque dédiée.
+- Collection locale des Kosmoji précédents.
+- Observatoire avec récurrences, historique local, export et effacement.
+- Export JSON d'un Kosmoji ou de la collection.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Confidentialité
 
-## Expanding the ESLint configuration
+Les données sont stockées uniquement dans le navigateur via `localStorage`. Aucun serveur n'est utilisé par défaut. L'utilisateur peut effacer son historique depuis l'Observatoire.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Cadre d'utilisation
+
+Kosmoji est un support d'expression et de discussion. En cas d'urgence, de danger ou de détresse importante, il faut contacter immédiatement un adulte de confiance, un professionnel ou un service d'urgence.
+
+## Développement
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run build
+npm run preview
+```
+
+## Structure principale
+
+- `src/App.jsx` : flux applicatif, révélation, observatoire, stockage local et export.
+- `src/data/steps.js` : catégories et bulles disponibles.
+- `src/data/resonances.js` : banque de questions de résonance.
+- `src/index.css` : styles visuels et responsive.
