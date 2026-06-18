@@ -1,9 +1,9 @@
 export const STEPS = [
   {
     id: 'world',
-    label: 'Reliefs',
+    label: 'Astres',
     color: '#60a5fa',
-    title: "Qu'est-ce qui occupe ton paysage intérieur aujourd'hui ?",
+    title: "Qu'est-ce qui occupe ton Kosmos intérieur aujourd'hui ?",
     items: [
       ['home', '🏠', 'Famille'],
       ['school', '🏫', 'École'],
@@ -21,9 +21,9 @@ export const STEPS = [
   },
   {
     id: 'inside',
-    label: 'Météo',
+    label: 'Climats',
     color: '#fb7185',
-    title: "Quelle météo traverse ton paysage intérieur ?",
+    title: "Quel climat traverse ton Kosmos intérieur ?",
     items: [
       ['anger', '😡', 'Orage'],
       ['fear', '😰', 'Vent fort'],
@@ -41,9 +41,9 @@ export const STEPS = [
   },
   {
     id: 'supports',
-    label: 'Refuges',
+    label: 'Satellites-refuges',
     color: '#4ade80',
-    title: "Quels sont les refuges de ton paysage intérieur ?",
+    title: "Quels refuges gravitent dans ton Kosmos intérieur ?",
     items: [
       ['support', '🤝', 'Soutien'],
       ['music', '🎵', 'Musique'],
@@ -63,7 +63,7 @@ export const STEPS = [
     id: 'missing',
     label: 'Besoins',
     color: '#c084fc',
-    title: "De quoi ton paysage intérieur aurait-il besoin aujourd'hui ?",
+    title: "De quoi ton Kosmos intérieur aurait-il besoin aujourd'hui ?",
     items: [
       ['calm', '🕊️', 'Calme'],
       ['hope', '🌈', 'Espoir'],
@@ -81,9 +81,9 @@ export const STEPS = [
   },
   {
     id: 'star',
-    label: 'Lieu à explorer',
+    label: 'Astre à explorer',
     color: '#facc15',
-    title: "Où aimerais-tu que nous regardions ensemble dans ce paysage ?",
+    title: "Quelle résonance aimerais-tu explorer ensemble ?",
     single: true,
     items: [
       ['spark', '✨', 'Lueur'],

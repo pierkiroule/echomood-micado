@@ -4,9 +4,9 @@ import './index.css'
 const STEPS = [
   {
     id: 'world',
-    label: 'Reliefs',
+    label: 'Astres',
     color: '#60a5fa',
-    title: "Qu'est-ce qui occupe ton paysage intérieur aujourd'hui ?",
+    title: "Qu'est-ce qui occupe ton Kosmos intérieur aujourd'hui ?",
     items: [
       ['home', '🏠', 'Famille'],
       ['school', '🏫', 'École'],
@@ -16,9 +16,9 @@ const STEPS = [
   },
   {
     id: 'inside',
-    label: 'Météo',
+    label: 'Climats',
     color: '#fb7185',
-    title: "Quelle météo traverse ton paysage intérieur ?",
+    title: "Quel climat traverse ton Kosmos intérieur ?",
     items: [
       ['anger', '😡', 'Orage'],
       ['fear', '😰', 'Vent fort'],
@@ -28,9 +28,9 @@ const STEPS = [
   },
   {
     id: 'supports',
-    label: 'Refuges',
+    label: 'Satellites-refuges',
     color: '#4ade80',
-    title: "Quels sont les refuges de ton paysage intérieur ?",
+    title: "Quels refuges gravitent dans ton Kosmos intérieur ?",
     items: [
       ['support', '🤝', 'Soutien'],
       ['music', '🎵', 'Musique'],
@@ -42,7 +42,7 @@ const STEPS = [
     id: 'missing',
     label: 'Besoins',
     color: '#c084fc',
-    title: "De quoi ton paysage intérieur aurait-il besoin aujourd'hui ?",
+    title: "De quoi ton Kosmos intérieur aurait-il besoin aujourd'hui ?",
     items: [
       ['calm', '🕊️', 'Calme'],
       ['hope', '🌈', 'Espoir'],
@@ -52,9 +52,9 @@ const STEPS = [
   },
   {
     id: 'star',
-    label: 'Étoile',
+    label: 'Astre à explorer',
     color: '#facc15',
-    title: "Où aimerais-tu que nous regardions ensemble dans ce paysage ?",
+    title: "Quelle résonance aimerais-tu explorer ensemble ?",
     single: true,
     items: [
       ['spark', '✨', 'Lueur'],
@@ -95,6 +95,7 @@ const EMPTY_CUSTOM_ITEMS = {
 }
 
 export default function App() {
+  const [screen, setScreen] = useState('flow')
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
   const [customItems, setCustomItems] = useState(EMPTY_CUSTOM_ITEMS)
@@ -118,6 +119,7 @@ export default function App() {
     setAnswers({})
     setCustomItems(EMPTY_CUSTOM_ITEMS)
     setCustomModalStep(null)
+    setScreen('flow')
   }
 
   function openCustomModal() {
@@ -157,8 +159,19 @@ export default function App() {
     return getCurrentStepHasAnswer()
   }
 
+  if (screen === 'dashboard') {
+    return <DashboardPlaceholder onBack={() => setScreen('flow')} />
+  }
+
   if (stepIndex >= STEPS.length) {
-    return <Reveal answers={answers} customItems={customItems} onReset={reset} />
+    return (
+      <Reveal
+        answers={answers}
+        customItems={customItems}
+        onReset={reset}
+        onOpenDashboard={() => setScreen('dashboard')}
+      />
+    )
   }
 
   const currentItems = getStepItems(current, customItems)
@@ -167,8 +180,7 @@ export default function App() {
     <main className="app">
       <section className="top">
         <div className="brand-title">
-          <span className="brand-echo">ECHO</span>
-          <span className="brand-mood">MOOD</span>
+          <span className="brand-echo">Kosmoji</span>
           <span className="brand-tag">MICADO</span>
         </div>
 
@@ -178,9 +190,12 @@ export default function App() {
           ))}
         </div>
 
+        {stepIndex === 0 && (
+          <p className="home-subtitle">Explorer son Kosmos intérieur</p>
+        )}
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
-        <p className="soft">Tapote une bulle. Plus le halo grandit, plus ça résonne.</p>
+        <p className="soft">Ce n’est pas un test. Il n’y a pas de bonne ou de mauvaise réponse. Choisis ce qui résonne aujourd’hui, puis découvre ton Kosmos du jour.</p>
       </section>
 
       <FloatingBubbles
@@ -297,29 +312,44 @@ function CustomItemModal({ initialItem, onCancel, onSave }) {
   )
 }
 
-function Reveal({ answers, customItems, onReset }) {
+function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
   const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
+  const [history] = useState(() => saveKosmoji(createKosmojiEntry(nodes, links)))
+
+  const recurringItems = getRecurringItems(history)
 
   return (
     <main className="app reveal-page">
       <section className="reveal-card">
         <div className="brand-title" style={{ marginBottom: '16px' }}>
-          <span className="brand-echo" style={{ fontSize: '20px' }}>ECHO</span>
-          <span className="brand-mood" style={{ fontSize: '20px' }}>MOOD</span>
+          <span className="brand-echo" style={{ fontSize: '24px' }}>Kosmoji</span>
           <span className="brand-tag" style={{ fontSize: '8px' }}>MICADO</span>
         </div>
-        <p className="kicker">Révélation</p>
-        <h1>Ton paysage intérieur aujourd'hui</h1>
-        <p className="soft">Ce ne sont pas des vérités. Ce sont des pistes pour discuter.</p>
+        <section className="reveal-hero">
+          <p className="kicker">Révélation</p>
+          <h1>Ton Kosmos du jour</h1>
+          <p className="reveal-subtitle">Une représentation des résonances qui traversent ton Kosmos intérieur aujourd’hui.</p>
+          <p className="soft">Ce Kosmos ne dit pas la vérité sur toi.</p>
+          <p className="soft">Il propose des pistes pour parler de ce qui résonne.</p>
+        </section>
 
-        <Constellation nodes={nodes} links={links} />
+        <section className="landscape-card">
+          <div className="section-heading">
+            <p className="kicker">Carte visuelle</p>
+            <h2>Kosmos du jour</h2>
+          </div>
+          <Constellation nodes={nodes} links={links} />
+          <EchoIdentity nodes={nodes} />
+        </section>
 
-        <EchoIdentity nodes={nodes} />
-
-        <EchoSummary nodes={nodes} />
+        <EchoSummary nodes={nodes} links={links} />
 
         <div className="questions">
+          <div className="section-heading">
+            <p className="kicker">Résonances possibles</p>
+            <h2>Des pistes à explorer</h2>
+          </div>
           {links.length === 0 && (
             <div className="question-card">
               <strong>Résonance possible</strong>
@@ -327,10 +357,11 @@ function Reveal({ answers, customItems, onReset }) {
             </div>
           )}
 
-          {links.map(([a, b, question], i) => (
+          {links.map(([a, b], i) => (
             <div className="question-card" key={i}>
-              <div className="pair">{findEmoji(a)} ↔ {findEmoji(b)}</div>
-              <p>{question}</p>
+              <strong>Résonance possible</strong>
+              <div className="pair">{formatNodePair(a, b, customItems)}</div>
+              <p>{getResonanceQuestion(a, b, customItems)}</p>
               <div className="mini-actions">
                 <span>Ça résonne</span>
                 <span>Pas aujourd’hui</span>
@@ -340,7 +371,22 @@ function Reveal({ answers, customItems, onReset }) {
           ))}
         </div>
 
-        <button className="primary" onClick={onReset}>Recommencer</button>
+        {recurringItems.length > 0 && (
+          <RecurringLandscape items={recurringItems} />
+        )}
+
+        <section className="collection-card">
+          <p className="kicker">Collection de Kosmoji</p>
+          <h2>Observatoire des résonances</h2>
+          <p>Retrouve tes Kosmoji précédents, les résonances qui reviennent souvent et l'évolution de ton Kosmos intérieur.</p>
+          <button className="primary" onClick={onOpenDashboard}>Ouvrir l’Observatoire</button>
+        </section>
+
+        <div className="final-actions">
+          <button className="primary" onClick={onReset}>Terminer</button>
+          <button className="secondary" onClick={onOpenDashboard}>Voir ma collection</button>
+          <button className="secondary" onClick={() => exportKosmoji(nodes, links)}>Exporter ce Kosmos</button>
+        </div>
       </section>
     </main>
   )
@@ -349,16 +395,16 @@ function Reveal({ answers, customItems, onReset }) {
 
 function EchoIdentity({ nodes }) {
   const groups = [
-    ['star', '📍 Lieu à explorer'],
-    ['world', '🌍 Reliefs'],
-    ['inside', '💓 Météo'],
-    ['supports', '🌱 Refuges'],
+    ['star', '✨ Astre à explorer'],
+    ['world', '🌌 Astres'],
+    ['inside', '🌀 Climats'],
+    ['supports', '🛰️ Satellites-refuges'],
     ['missing', '🧭 Besoins']
   ]
 
   return (
     <div className="identity-card">
-      <h3>Ton paysage intérieur</h3>
+      <h3>Ton Kosmos intérieur</h3>
       {groups.map(([group, title]) => {
         const items = nodes.filter(n => n.group === group)
         if (!items.length) return null
@@ -380,41 +426,75 @@ function EchoIdentity({ nodes }) {
   )
 }
 
-function EchoSummary({ nodes }) {
-  const world = nodes.filter(n => n.group === 'world').map(n => n.label)
-  const inside = nodes.filter(n => n.group === 'inside').map(n => n.label)
-  const supports = nodes.filter(n => n.group === 'supports').map(n => n.label)
-  const missing = nodes.filter(n => n.group === 'missing').map(n => n.label)
+function EchoSummary({ nodes, links = [] }) {
+  const world = nodes.filter(n => n.group === 'world')
+  const inside = nodes.filter(n => n.group === 'inside')
+  const supports = nodes.filter(n => n.group === 'supports')
+  const missing = nodes.filter(n => n.group === 'missing')
   const star = nodes.find(n => n.group === 'star')
 
   return (
-    <div className="summary-card">
-      <h3>Lecture du paysage</h3>
-      <p>
-        Aujourd'hui, ton paysage intérieur semble s'organiser autour de
-        {star ? <b> {star.emoji} {star.label}</b> : ' quelque chose encore à préciser'}.
-      </p>
+    <section className="summary-card">
+      <p className="kicker">Résumé automatique</p>
+      <h2>Aujourd'hui :</h2>
 
       {world.length > 0 && (
-        <p>Dans le monde autour de toi, <b>{world.join(', ')}</b> prend de la place.</p>
+        <p>{formatListWithEmoji(world)} semblent occuper ton Kosmos intérieur.</p>
       )}
 
       {inside.length > 0 && (
-        <p>Météo, ça résonne avec <b>{inside.join(', ')}</b>.</p>
+        <p>Un climat particulier traverse ce Kosmos avec {formatListWithEmoji(inside)}.</p>
       )}
 
       {supports.length > 0 && (
-        <p>Des appuis apparaissent : <b>{supports.join(', ')}</b>.</p>
+        <p>{formatListWithEmoji(supports)} apparaissent comme des satellites-refuges.</p>
       )}
 
       {missing.length > 0 && (
-        <p>Ce qui serait précieux aujourd’hui : <b>{missing.join(', ')}</b>.</p>
+        <p>{formatListWithEmoji(missing)} dessinent certains besoins.</p>
       )}
 
-      <p className="summary-soft">
-        Ce résumé ne dit pas la vérité. Il sert seulement à ouvrir la discussion.
-      </p>
-    </div>
+      {star && (
+        <p>✨ Une résonance, {star.emoji} {star.label}, peut être explorée ensemble.</p>
+      )}
+
+      {links.length === 0 && (
+        <p>✨ Une résonance peut être explorée ensemble.</p>
+      )}
+
+      <p className="summary-soft">Cette synthèse reste une représentation locale du jour, à discuter librement.</p>
+    </section>
+  )
+}
+
+function RecurringLandscape({ items }) {
+  return (
+    <section className="recurring-card">
+      <p className="kicker">Collection de Kosmoji</p>
+      <h2>Ce qui revient dans ton Kosmos intérieur</h2>
+      <div className="recurring-list">
+        {items.map(item => (
+          <div className="recurring-item" key={item.id}>
+            <span>{item.emoji}</span>
+            <strong>{item.label}</strong>
+            <small>présent dans {item.count} Kosmoji</small>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function DashboardPlaceholder({ onBack }) {
+  return (
+    <main className="app reveal-page">
+      <section className="reveal-card dashboard-placeholder">
+        <p className="kicker">Observatoire des résonances</p>
+        <h1>Collection de Kosmoji</h1>
+        <p className="soft">La navigation vers l’Observatoire est prête. Les astres, climats, satellites-refuges, besoins et constellations récurrentes pourront être branchés ici.</p>
+        <button className="primary" onClick={onBack}>Revenir au Kosmos du jour</button>
+      </section>
+    </main>
   )
 }
 
@@ -454,6 +534,7 @@ function Constellation({ nodes, links }) {
           }}
         >
           <span>{n.emoji}</span>
+          <small>{n.label}</small>
         </div>
       ))}
     </div>
@@ -527,6 +608,105 @@ function positionNodes(nodes) {
   return result
 }
 
+const STORAGE_KEY = 'kosmoji-collection'
+const LEGACY_STORAGE_KEY = 'echomood-history'
+
+function createKosmojiEntry(nodes, links) {
+  return {
+    id: `kosmoji-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    nodes: nodes.map(({ id, emoji, label, group }) => ({ id, emoji, label, group })),
+    links: links.map(([a, b, question]) => ({ a, b, question })),
+  }
+}
+
+function getSavedKosmoji() {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY) || '[]')
+    return Array.isArray(saved) ? saved : []
+  } catch {
+    return []
+  }
+}
+
+function saveKosmoji(entry) {
+  if (typeof window === 'undefined') return []
+
+  const previous = getSavedKosmoji()
+  const signature = getEntrySignature(entry)
+  const withoutDuplicate = previous.filter(item => getEntrySignature(item) !== signature)
+  const next = [entry, ...withoutDuplicate].slice(0, 50)
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+  return next
+}
+
+function getEntrySignature(entry) {
+  return (entry.nodes || []).map(node => `${node.group}:${node.id}`).sort().join('|')
+}
+
+function getRecurringItems(history) {
+  if (!Array.isArray(history) || history.length < 2) return []
+
+  const counts = new Map()
+  history.forEach(entry => {
+    const seen = new Set()
+    ;(entry.nodes || []).forEach(node => {
+      if (node.group === 'star' || seen.has(node.id)) return
+      seen.add(node.id)
+      const current = counts.get(node.id) || { ...node, count: 0 }
+      counts.set(node.id, { ...current, count: current.count + 1 })
+    })
+  })
+
+  return [...counts.values()]
+    .filter(item => item.count > 1)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3)
+}
+
+function formatListWithEmoji(items) {
+  return items.map(item => `${item.emoji} ${item.label}`).join(' et ')
+}
+
+function formatNodePair(a, b, customItems) {
+  const first = findNodeLabel(a, customItems)
+  const second = findNodeLabel(b, customItems)
+  return (
+    <>
+      <span>{first.emoji} {first.label}</span>
+      <span aria-hidden="true">↔</span>
+      <span>{second.emoji} {second.label}</span>
+    </>
+  )
+}
+
+function getResonanceQuestion(a, b, customItems) {
+  const first = findNodeLabel(a, customItems)
+  const second = findNodeLabel(b, customItems)
+  return `Est-ce qu’il pourrait y avoir un lien entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} aujourd’hui ?`
+}
+
+function findNodeLabel(id, customItems = {}) {
+  for (const step of STEPS) {
+    const found = getStepItems(step, customItems).find(item => item[0] === id)
+    if (found) return { emoji: found[1], label: found[2] }
+  }
+  return { emoji: '•', label: 'Résonance' }
+}
+
+function exportKosmoji(nodes, links) {
+  const entry = createKosmojiEntry(nodes, links)
+  const blob = new Blob([JSON.stringify(entry, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = `kosmoji-${new Date().toISOString().slice(0, 10)}.json`
+  anchor.click()
+  URL.revokeObjectURL(url)
+}
+
 function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
   if (!step) return []
 
@@ -593,10 +773,3 @@ function getLinks(answers) {
   return RULES.filter(([a, b]) => activeIds.includes(a) && activeIds.includes(b))
 }
 
-function findEmoji(id) {
-  for (const step of STEPS) {
-    const found = step.items.find(i => i[0] === id)
-    if (found) return found[1]
-  }
-  return '•'
-}
