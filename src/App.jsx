@@ -100,7 +100,6 @@ export default function App() {
   const [customItems, setCustomItems] = useState(EMPTY_CUSTOM_ITEMS)
   const [customModalStep, setCustomModalStep] = useState(null)
   const current = STEPS[stepIndex]
-  const currentItems = getStepItems(current, customItems)
 
   function toggle(id) {
     if (current.single) {
@@ -161,6 +160,8 @@ export default function App() {
   if (stepIndex >= STEPS.length) {
     return <Reveal answers={answers} customItems={customItems} onReset={reset} />
   }
+
+  const currentItems = getStepItems(current, customItems)
 
   return (
     <main className="app">
@@ -527,6 +528,8 @@ function positionNodes(nodes) {
 }
 
 function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
+  if (!step) return []
+
   const customItem = customItems?.[step.id]
   const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
 
