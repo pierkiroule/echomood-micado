@@ -2,10 +2,17 @@
 
 html, body, #root {
   margin: 0;
+  width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: system-ui, sans-serif;
   background: #020617;
   color: white;
+}
+
+html,
+body {
+  overflow: hidden;
 }
 
 button { font: inherit; }
@@ -13,9 +20,9 @@ button { font: inherit; }
 .app {
   height: 100dvh;
   max-height: 100dvh;
-  padding: 14px;
+  padding: max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: min-content minmax(0, 1fr) min-content;
   background:
     radial-gradient(circle at 20% 18%, rgba(96,165,250,.20), transparent 28%),
     radial-gradient(circle at 82% 32%, rgba(192,132,252,.18), transparent 30%),
@@ -27,13 +34,14 @@ button { font: inherit; }
 .top {
   text-align: center;
   z-index: 2;
+  min-height: 0;
 }
 
 .progress {
   display: flex;
   justify-content: center;
   gap: 6px;
-  margin-bottom: 18px;
+  margin-bottom: clamp(8px, 2.2vh, 18px);
 }
 
 .progress span {
@@ -61,7 +69,7 @@ button { font: inherit; }
   align-items: center;
   justify-content: center;
   gap: 4px;
-  margin-bottom: 24px;
+  margin-bottom: clamp(10px, 2.8vh, 24px);
 }
 
 .brand-echo {
@@ -102,27 +110,35 @@ h1 {
   line-height: 1.12;
 }
 
+h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.15;
+}
+
 .soft {
-  margin: 12px auto 0;
+  margin: clamp(6px, 1.5vh, 12px) auto 0;
   max-width: 340px;
   color: #94a3b8;
-  font-size: 14px;
+  font-size: clamp(12px, 3.4vw, 14px);
   line-height: 1.4;
 }
 
 .bubble-stage {
   position: relative;
   flex: 1;
-  min-height: 460px;
-  margin: 16px 0;
+  min-height: 0;
+  height: 100%;
+  margin: clamp(4px, 1.8vh, 16px) 0;
+  overflow: visible;
 }
 
 .bubble {
   position: absolute;
   left: var(--x);
   top: var(--y);
-  width: clamp(92px, 27vw, 124px);
-  height: clamp(92px, 27vw, 124px);
+  width: clamp(86px, 25vw, 124px);
+  height: clamp(86px, 25vw, 124px);
   transform: translate(-50%, -50%);
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.16);
@@ -136,6 +152,14 @@ h1 {
   animation: float 8s ease-in-out infinite;
   animation-delay: var(--delay);
   box-shadow: 0 18px 60px rgba(0,0,0,.30);
+  touch-action: manipulation;
+}
+
+.bubble-add {
+  border-style: dashed;
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,.14), transparent 25%),
+    rgba(15,23,42,.54);
 }
 
 .bubble-emoji {
@@ -148,10 +172,19 @@ h1 {
 .bubble-label {
   position: absolute;
   z-index: 4;
-  bottom: 10px;
+  bottom: 9px;
+  max-width: calc(100% - 14px);
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(2,6,23,.56);
   font-size: clamp(10px, 3vw, 12px);
-  color: #dbeafe;
+  line-height: 1.1;
+  color: #eff6ff;
   font-weight: 800;
+  text-shadow: 0 1px 8px rgba(0,0,0,.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .halo {
@@ -197,13 +230,15 @@ h1 {
   display: flex;
   gap: 12px;
   z-index: 2;
+  padding-top: 4px;
 }
 
 .primary, .secondary {
   flex: 1;
   border: 0;
   border-radius: 16px;
-  padding: 13px;
+  min-height: 48px;
+  padding: 12px 13px;
   font-weight: 900;
   cursor: pointer;
 }
@@ -223,19 +258,30 @@ h1 {
 }
 
 .reveal-page {
+  display: block;
+  height: 100dvh;
+  max-height: none;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
 }
 
 .reveal-card {
   width: 100%;
   max-width: 470px;
-  margin: auto;
+  margin: 0 auto;
   text-align: center;
-  padding: 22px;
+  padding: clamp(16px, 4vw, 22px);
   border-radius: 30px;
   background: rgba(15,23,42,.78);
   border: 1px solid rgba(255,255,255,.13);
   box-shadow: 0 24px 90px rgba(0,0,0,.35);
+}
+
+.reveal-card > .primary {
+  position: sticky;
+  bottom: max(0px, env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 28px rgba(2,6,23,.62);
 }
 
 .constellation {
@@ -243,7 +289,7 @@ h1 {
   width: 100%;
   max-width: 420px;
   aspect-ratio: 1;
-  margin: 24px auto;
+  margin: clamp(14px, 3vh, 24px) auto;
   border-radius: 32px;
   background:
     radial-gradient(circle, rgba(255,255,255,.11), transparent 62%),
@@ -342,6 +388,63 @@ h1 {
   opacity: .28;
   cursor: not-allowed;
   filter: grayscale(1);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2,6,23,.74);
+  backdrop-filter: blur(10px);
+}
+
+.custom-modal {
+  width: min(100%, 360px);
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(15,23,42,.96);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+}
+
+.custom-modal label {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.custom-modal input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 14px;
+  padding: 12px 13px;
+  background: rgba(2,6,23,.82);
+  color: white;
+  font: inherit;
+  outline: 0;
+}
+
+.custom-modal input:focus {
+  border-color: #67e8f9;
+  box-shadow: 0 0 0 3px rgba(103,232,249,.16);
+}
+
+.modal-hint {
+  margin: 10px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 
@@ -575,4 +678,3 @@ h1 {
   padding: 4px 7px;
   border-radius: 999px;
 }
-
