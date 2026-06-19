@@ -52,8 +52,11 @@ export default function App() {
   const current = STEPS[stepIndex]
 
   useEffect(() => {
-    updateSoundFromAnswers(answers, current)
-  }, [answers, current])
+    if (!soundEnabled) return
+
+    const activeStep = stepIndex < STEPS.length ? STEPS[stepIndex] : null
+    updateSoundFromAnswers(answers, activeStep)
+  }, [answers, stepIndex, soundEnabled])
 
   useEffect(() => () => disposeSound(), [])
 
