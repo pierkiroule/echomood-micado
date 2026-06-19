@@ -368,13 +368,14 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
 
         <div className="questions">
           <div className="section-heading">
-            <p className="kicker">Résonances possibles</p>
-            <h2>Des pistes à explorer</h2>
+            <p className="kicker">Questions guidées</p>
+            <h2>Des liens plus simples à explorer</h2>
           </div>
           {links.length === 0 && (
             <div className="question-card">
-              <strong>Résonance possible</strong>
-              <p>Y a-t-il un lien que l’application ne voit pas, mais que toi tu ressens ?</p>
+              <strong>Question pour en parler</strong>
+              <p className="question-main">Qu’est-ce qui te semble important dans ton Échomood aujourd’hui ?</p>
+              <p className="question-hint">Tu peux partir d’une bulle, d’un lien, ou simplement d’un mot qui reste.</p>
             </div>
           )}
 
@@ -382,9 +383,10 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
             const key = `${a}-${b}-${i}`
             return (
               <div className="question-card" key={key}>
-                <strong>Résonance possible</strong>
+                <strong>Question pour en parler</strong>
                 <div className="pair">{formatNodePair(a, b, customItems)}</div>
-                <p>{getResonanceQuestion(a, b, customItems, question)}</p>
+                <p className="question-main">{getClearResonanceQuestion(a, b, customItems)}</p>
+                {question && <p className="question-hint">Pour préciser : {question}</p>}
                 <div className="mini-actions" aria-label="Répondre à cette piste">
                   {['Ça résonne', 'Pas aujourd’hui', 'Je ne sais pas'].map(label => (
                     <button
@@ -818,7 +820,8 @@ function createKosmojiEntry(nodes, links) {
     links: links.map(([a, b, question], index) => ({
       a,
       b,
-      question: getResonanceQuestionFromNodes(a, b, nodes, question),
+      question: getClearResonanceQuestionFromNodes(a, b, nodes),
+      sourceQuestion: question ? getResonanceQuestionFromNodes(a, b, nodes, question) : undefined,
       key: `${a}-${b}-${index}`,
     })),
   }
@@ -941,12 +944,16 @@ function getEntryGroup(entry, group) {
   return (entry.nodes || []).filter(node => node.group === group)
 }
 
+function getClearResonanceQuestionFromNodes(a, b, nodes) {
+  const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
+  const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
+  return `Entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label}, qu’est-ce qui te parle le plus aujourd’hui ?`
+}
+
 function getResonanceQuestionFromNodes(a, b, nodes, question) {
   if (question) return question
 
-  const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
-  const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
-  return `Est-ce qu’il pourrait y avoir un lien entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} aujourd’hui ?`
+  return getClearResonanceQuestionFromNodes(a, b, nodes)
 }
 
 
@@ -986,13 +993,12 @@ function formatNodePair(a, b, customItems) {
   )
 }
 
-function getResonanceQuestion(a, b, customItems, question) {
-  if (question) return question
-
+function getClearResonanceQuestion(a, b, customItems) {
   const first = findNodeLabel(a, customItems)
   const second = findNodeLabel(b, customItems)
-  return `Est-ce qu’il pourrait y avoir un lien entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} aujourd’hui ?`
+  return `Entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label}, qu’est-ce qui te parle le plus aujourd’hui ?`
 }
+
 
 function findNodeLabel(id, customItems = {}) {
   for (const step of STEPS) {

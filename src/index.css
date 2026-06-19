@@ -1275,3 +1275,18 @@ h2 {
 .flow-scrollbar-labels span:last-child {
   color: #fde68a;
 }
+
+.question-main {
+  margin-top: 8px !important;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.45;
+}
+
+.question-hint {
+  margin-top: 8px !important;
+  color: #bfdbfe;
+  font-size: 13px;
+  line-height: 1.45;
+}
