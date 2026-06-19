@@ -181,7 +181,6 @@ function HomeScreen({ onStart }) {
       <section className="home-card">
         <div className="brand-title home-brand">
           <span className="brand-echo">ÉchoMood</span>
-          <span className="brand-tag">MICADO</span>
         </div>
         <p className="home-subtitle">Explorons ton vécu comme un écho intérieur ✨️</p>
         <p className="echomood-definition">Ton ÉchoMood, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Choisis les émojis qui font écho à ce que tu ressens : ils aident à nommer, partager et explorer ce qui vibre en toi.</p>
@@ -359,7 +358,6 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
       <section className="reveal-card">
         <div className="brand-title" style={{ marginBottom: '16px' }}>
           <span className="brand-echo" style={{ fontSize: '24px' }}>ÉchoMood</span>
-          <span className="brand-tag" style={{ fontSize: '8px' }}>MICADO</span>
         </div>
         <section className="reveal-hero">
           <p className="kicker">ÉchoMood révélé</p>

@@ -1,6 +1,6 @@
-# ÉchoMood MICADO
+# ÉchoMood
 
-ÉchoMood MICADO est une application React/Vite qui aide une personne à représenter son « écho intérieur » du jour à travers des astres, des climats émotionnels, des satellites-refuges, des besoins et une résonance à explorer.
+ÉchoMood est une application React/Vite qui aide une personne à représenter son « écho intérieur » du jour à travers des astres, des climats émotionnels, des satellites-refuges, des besoins et une résonance à explorer.
 
 L'application est pensée comme un support de dialogue : elle ne pose pas de diagnostic, ne remplace pas un professionnel de santé et ne prétend pas dire la vérité sur l'utilisateur.
 
