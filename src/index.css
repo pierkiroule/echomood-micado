@@ -902,6 +902,53 @@ h2 {
 }
 
 /* Marque ÉchoMood */
+
+.home-page {
+  grid-template-rows: 1fr;
+  place-items: center;
+  padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.home-card {
+  width: min(100%, 430px);
+  padding: clamp(24px, 7vw, 38px) clamp(18px, 6vw, 30px);
+  border: 1px solid rgba(103,232,249,.18);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(103,232,249,.18), transparent 34%),
+    radial-gradient(circle at 90% 100%, rgba(192,132,252,.16), transparent 38%),
+    rgba(15,23,42,.78);
+  box-shadow: 0 24px 80px rgba(0,0,0,.42), 0 0 46px rgba(103,232,249,.12);
+  text-align: center;
+}
+
+.home-brand {
+  margin-bottom: clamp(14px, 3vh, 22px);
+}
+
+.home-page .brand-echo {
+  font-size: clamp(34px, 11vw, 52px);
+}
+
+.home-page .brand-tag {
+  font-size: clamp(9px, 2.6vw, 12px);
+}
+
+.home-page .home-subtitle {
+  margin: 0 auto 16px;
+}
+
+.home-page .echomood-definition {
+  margin-bottom: 22px;
+}
+
+.home-start {
+  width: 100%;
+}
+
+.flow-top {
+  padding-top: 2px;
+}
 .home-subtitle {
   margin: -4px auto 12px;
   color: #dbeafe;

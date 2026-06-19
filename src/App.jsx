@@ -35,7 +35,7 @@ const GROUP_LABELS = [
 
 
 export default function App() {
-  const [screen, setScreen] = useState('flow')
+  const [screen, setScreen] = useState('home')
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
   const [customItems, setCustomItems] = useState(EMPTY_CUSTOM_ITEMS)
@@ -59,7 +59,7 @@ export default function App() {
     setAnswers({})
     setCustomItems(EMPTY_CUSTOM_ITEMS)
     setCustomModalStep(null)
-    setScreen('flow')
+    setScreen('home')
   }
 
   function openCustomModal() {
@@ -105,6 +105,11 @@ export default function App() {
     return getCurrentStepHasAnswer()
   }
 
+
+  if (screen === 'home') {
+    return <HomeScreen onStart={() => setScreen('flow')} />
+  }
+
   if (screen === 'dashboard') {
     return <DashboardPlaceholder onBack={() => setScreen('flow')} />
   }
@@ -124,22 +129,13 @@ export default function App() {
 
   return (
     <main className="app">
-      <section className="top">
-        <div className="brand-title">
-          <span className="brand-echo">ÉchoMood</span>
-          <span className="brand-tag">MICADO</span>
-        </div>
-
+      <section className="top flow-top">
         <div className="progress">
           {STEPS.map((s, i) => (
             <span key={s.id} className={i <= stepIndex ? 'on' : ''} />
           ))}
         </div>
 
-        {stepIndex === 0 && (
-          <p className="home-subtitle">Explorons ton vécu comme un écho intérieur ✨️</p>
-        )}
-        <p className="echomood-definition">Ton ÉchoMood, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Choisis les émojis qui font écho à ce que tu ressens : ils aident à nommer, partager et explorer ce qui vibre en toi.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton ÉchoMood avant de terminer par ton Échollection.</p>
@@ -174,6 +170,23 @@ export default function App() {
           onSave={item => saveCustomItem(customModalStep, item)}
         />
       )}
+    </main>
+  )
+}
+
+
+function HomeScreen({ onStart }) {
+  return (
+    <main className="app home-page">
+      <section className="home-card">
+        <div className="brand-title home-brand">
+          <span className="brand-echo">ÉchoMood</span>
+          <span className="brand-tag">MICADO</span>
+        </div>
+        <p className="home-subtitle">Explorons ton vécu comme un écho intérieur ✨️</p>
+        <p className="echomood-definition">Ton ÉchoMood, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Choisis les émojis qui font écho à ce que tu ressens : ils aident à nommer, partager et explorer ce qui vibre en toi.</p>
+        <button className="primary home-start" onClick={onStart} type="button">Commencer</button>
+      </section>
     </main>
   )
 }
