@@ -137,9 +137,9 @@ export default function App() {
         </div>
 
         {stepIndex === 0 && (
-          <p className="home-subtitle">Explorer ce qui se passe en ce moment</p>
+          <p className="home-subtitle">Explorons ton vécu comme si c’était un cosmos intérieur ✨️</p>
         )}
-        <p className="kosmoji-definition">Un Kosmoji, c’est ton humeur et ton vécu du moment, traduits en émojis pour en parler plus facilement.</p>
+        <p className="kosmoji-definition">Ton Kosmoji, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Il te suffit de choisir les émojis qui traduisent le mieux ce que tu ressens.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton Échomood avant de terminer par ton Échollection.</p>
