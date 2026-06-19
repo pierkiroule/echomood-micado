@@ -6,12 +6,14 @@ import { RESONANCES } from './data/resonances'
 const MAX_VISIBLE_ITEMS = 6
 const MAX_VISIBLE_STAR_ITEMS = 5
 
+const MAX_CUSTOM_ITEMS_PER_STEP = 5
+
 const EMPTY_CUSTOM_ITEMS = {
-  world: null,
-  inside: null,
-  supports: null,
-  missing: null,
-  star: null,
+  world: [],
+  inside: [],
+  supports: [],
+  missing: [],
+  star: [],
 }
 
 export default function App() {
@@ -47,16 +49,22 @@ export default function App() {
   }
 
   function saveCustomItem(stepId, item) {
-    const customId = `custom-${stepId}`
+    const customId = `custom-${stepId}-${Date.now()}`
+    const customItem = {
+      id: customId,
+      emoji: item.emoji,
+      label: item.label,
+    }
 
-    setCustomItems(prev => ({
-      ...prev,
-      [stepId]: {
-        id: customId,
-        emoji: item.emoji,
-        label: item.label,
-      },
-    }))
+    setCustomItems(prev => {
+      const existingItems = getCustomItemsForStep(prev, stepId)
+      if (existingItems.length >= MAX_CUSTOM_ITEMS_PER_STEP) return prev
+
+      return {
+        ...prev,
+        [stepId]: [...existingItems, customItem],
+      }
+    })
 
     setAnswers(prev => ({
       ...prev,
@@ -141,7 +149,7 @@ export default function App() {
 
       {customModalStep && (
         <CustomItemModal
-          initialItem={customItems[customModalStep]}
+          customCount={getCustomItemsForStep(customItems, customModalStep).length}
           onCancel={() => setCustomModalStep(null)}
           onSave={item => saveCustomItem(customModalStep, item)}
         />
@@ -151,7 +159,8 @@ export default function App() {
 }
 
 function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
-  const layout = getBubbleLayout(items.length)
+  const ringItemsCount = items.filter(([, , , type]) => type !== 'add-custom').length
+  const layout = getBubbleLayout(ringItemsCount)
 
   return (
     <div
@@ -164,8 +173,9 @@ function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
     >
       {items.map(([id, emoji, label, type], index) => {
         const level = step.single ? (answers.star === id ? 3 : 0) : answers[id] || 0
-        const pos = getBubblePosition(index, items.length)
         const isAddCustom = type === 'add-custom'
+        const ringIndex = items.slice(0, index).filter(([, , , itemType]) => itemType !== 'add-custom').length
+        const pos = isAddCustom ? getCenterBubblePosition() : getBubblePosition(ringIndex, ringItemsCount)
 
         return (
           <button
@@ -208,18 +218,17 @@ function getBubbleLayout(total) {
   return { size: 'clamp(52px, 13vw, 82px)', emojiSize: 'clamp(21px, 5.6vw, 31px)', labelSize: 'clamp(8px, 2.1vw, 10px)' }
 }
 
+function getCenterBubblePosition() {
+  return { left: '50%', top: '50%', delay: '.2s' }
+}
+
 function getBubblePosition(index, total) {
-  if (total <= 1) return { left: '50%', top: '50%', delay: '0s' }
+  if (total <= 1) return { left: '50%', top: '18%', delay: '0s' }
 
-  const centerIndex = total - 1
-  if (index === centerIndex) {
-    return { left: '50%', top: '50%', delay: '.2s' }
-  }
-
-  const ringCount = Math.max(1, total - 1)
+  const ringCount = Math.max(1, total)
   const angle = (-90 + (360 / ringCount) * index) * Math.PI / 180
-  const radiusX = ringCount > 7 ? 38 : 33
-  const radiusY = ringCount > 7 ? 35 : 32
+  const radiusX = ringCount > 7 ? 39 : 34
+  const radiusY = ringCount > 7 ? 36 : 32
   return {
     left: `${50 + Math.cos(angle) * radiusX}%`,
     top: `${50 + Math.sin(angle) * radiusY}%`,
@@ -227,9 +236,9 @@ function getBubblePosition(index, total) {
   }
 }
 
-function CustomItemModal({ initialItem, onCancel, onSave }) {
-  const [emoji, setEmoji] = useState(initialItem?.emoji || '')
-  const [label, setLabel] = useState(initialItem?.label || '')
+function CustomItemModal({ customCount, onCancel, onSave }) {
+  const [emoji, setEmoji] = useState('')
+  const [label, setLabel] = useState('')
   const cleanLabel = label.trim().slice(0, 20)
   const cleanEmoji = emoji.trim().slice(0, 4)
   const canSave = cleanEmoji.length > 0 && cleanLabel.length > 0
@@ -264,7 +273,7 @@ function CustomItemModal({ initialItem, onCancel, onSave }) {
             maxLength={20}
           />
         </label>
-        <p className="modal-hint">{cleanLabel.length}/20 caractères · local uniquement</p>
+        <p className="modal-hint">{cleanLabel.length}/20 caractères · {customCount}/{MAX_CUSTOM_ITEMS_PER_STEP} ajouts · local uniquement</p>
         <div className="modal-actions">
           <button className="secondary" type="button" onClick={onCancel}>Annuler</button>
           <button className="primary" type="submit" disabled={!canSave}>Valider</button>
@@ -739,21 +748,26 @@ function exportKosmoji(nodes, links) {
   URL.revokeObjectURL(url)
 }
 
+function getCustomItemsForStep(customItems = EMPTY_CUSTOM_ITEMS, stepId) {
+  const rawItems = customItems?.[stepId]
+  if (!rawItems) return []
+  return Array.isArray(rawItems) ? rawItems : [rawItems]
+}
+
 function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
   if (!step) return []
 
-  const customItem = customItems?.[step.id]
+  const customItemsForStep = getCustomItemsForStep(customItems, step.id).slice(0, MAX_CUSTOM_ITEMS_PER_STEP)
   const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
   const maxItems = step.single ? MAX_VISIBLE_STAR_ITEMS : MAX_VISIBLE_ITEMS
   const suggestedItems = step.items.slice(0, maxItems)
-
-  if (!customItem) {
-    return [...suggestedItems, addCustomItem]
-  }
+  const customBubbles = customItemsForStep.map(item => [item.id, item.emoji, item.label, 'custom'])
+  const canAddMore = customItemsForStep.length < MAX_CUSTOM_ITEMS_PER_STEP
 
   return [
     ...suggestedItems,
-    [customItem.id, customItem.emoji, customItem.label, 'custom'],
+    ...customBubbles,
+    ...(canAddMore ? [addCustomItem] : []),
   ]
 }
 
