@@ -1037,3 +1037,30 @@ h2 {
 .c-node.central small {
   transform: translateY(calc(var(--network-label-offset, 22px) + 3px));
 }
+
+/* Labels complets: le texte sous les émojis ne doit jamais être tronqué. */
+.bubble {
+  overflow: visible;
+}
+
+.bubble-label {
+  bottom: -18px;
+  max-width: min(128px, 34vw);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.constellation {
+  overflow: visible;
+}
+
+.c-node small {
+  max-width: min(120px, 28vw);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
