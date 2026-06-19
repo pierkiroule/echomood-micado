@@ -1,90 +1,10 @@
 import { useState } from 'react'
 import './index.css'
+import { STEPS } from './data/steps'
+import { RESONANCES } from './data/resonances'
 
-const STEPS = [
-  {
-    id: 'world',
-    label: 'Astres',
-    color: '#60a5fa',
-    title: "Qu'est-ce qui occupe ton Kosmos intérieur aujourd'hui ?",
-    items: [
-      ['home', '🏠', 'Famille'],
-      ['school', '🏫', 'École'],
-      ['friends', '👥', 'Amis'],
-      ['phone', '📱', 'Réseaux'],
-    ],
-  },
-  {
-    id: 'inside',
-    label: 'Climats',
-    color: '#fb7185',
-    title: "Quel climat traverse ton Kosmos intérieur ?",
-    items: [
-      ['anger', '😡', 'Orage'],
-      ['fear', '😰', 'Vent fort'],
-      ['sad', '😔', 'Pluie'],
-      ['empty', '😶', 'Brume'],
-    ],
-  },
-  {
-    id: 'supports',
-    label: 'Satellites-refuges',
-    color: '#4ade80',
-    title: "Quels refuges gravitent dans ton Kosmos intérieur ?",
-    items: [
-      ['support', '🤝', 'Soutien'],
-      ['music', '🎵', 'Musique'],
-      ['nature', '🌳', 'Nature'],
-      ['talk', '🗣️', 'Parler'],
-    ],
-  },
-  {
-    id: 'missing',
-    label: 'Besoins',
-    color: '#c084fc',
-    title: "De quoi ton Kosmos intérieur aurait-il besoin aujourd'hui ?",
-    items: [
-      ['calm', '🕊️', 'Calme'],
-      ['hope', '🌈', 'Espoir'],
-      ['direction', '🧭', 'Cap'],
-      ['comfort', '🤗', 'Réconfort'],
-    ],
-  },
-  {
-    id: 'star',
-    label: 'Astre à explorer',
-    color: '#facc15',
-    title: "Quelle résonance aimerais-tu explorer ensemble ?",
-    single: true,
-    items: [
-      ['spark', '✨', 'Lueur'],
-      ['change', '🌱', 'Changement'],
-      ['challenge', '🚀', 'Défi'],
-      ['link', '❤️', 'Lien'],
-    ],
-  },
-]
-
-const RULES = [
-  ['home', 'anger', 'Y a-t-il quelque chose dans la famille qui pourrait avoir un lien avec cette colère ?'],
-  ['school', 'fear', 'Qu’est-ce qui pourrait relier l’école au stress ?'],
-  ['phone', 'fear', 'Le téléphone apaise-t-il le stress, ou est-ce qu’il l’augmente parfois ?'],
-  ['friends', 'empty', 'Quand le groupe est là, est-ce que le vide change de forme ?'],
-  ['music', 'sad', 'La musique accompagne-t-elle ou transforme-t-elle la tristesse ?'],
-  ['support', 'sad', 'Qui reste présent quand la tristesse arrive ?'],
-  ['calm', 'fear', 'Qu’est-ce qui pourrait aider le calme à rencontrer la peur ?'],
-  ['talk', 'anger', 'Qu’est-ce qui pourrait aider la colère à devenir des mots ?'],
-  ['nature', 'sad', 'Dehors, est-ce que la tristesse change de forme ?'],
-  ['hope', 'empty', 'Qu’est-ce qui pourrait remettre une petite lueur quand le vide est là ?'],
-]
-
-const POSITIONS = [
-  { left: '25%', top: '26%', delay: '0s' },
-  { left: '73%', top: '28%', delay: '.8s' },
-  { left: '28%', top: '70%', delay: '1.4s' },
-  { left: '72%', top: '70%', delay: '.3s' },
-  { left: '50%', top: '50%', delay: '.6s' },
-]
+const MAX_VISIBLE_ITEMS = 6
+const MAX_VISIBLE_STAR_ITEMS = 5
 
 const EMPTY_CUSTOM_ITEMS = {
   world: null,
@@ -231,11 +151,20 @@ export default function App() {
 }
 
 function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
+  const layout = getBubbleLayout(items.length)
+
   return (
-    <div className="bubble-stage">
+    <div
+      className="bubble-stage"
+      style={{
+        '--bubble-size': layout.size,
+        '--bubble-emoji-size': layout.emojiSize,
+        '--bubble-label-size': layout.labelSize,
+      }}
+    >
       {items.map(([id, emoji, label, type], index) => {
         const level = step.single ? (answers.star === id ? 3 : 0) : answers[id] || 0
-        const pos = POSITIONS[index]
+        const pos = getBubblePosition(index, items.length)
         const isAddCustom = type === 'add-custom'
 
         return (
@@ -243,6 +172,7 @@ function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
             key={id}
             className={`bubble ${isAddCustom ? 'bubble-add' : ''} level-${level}`}
             onClick={() => isAddCustom ? onCustomTap() : onTap(id)}
+            aria-label={`${isAddCustom ? 'Ajouter une autre bulle' : label} · intensité ${level} sur 3`}
             style={{
               '--x': pos.left,
               '--y': pos.top,
@@ -263,6 +193,38 @@ function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
       })}
     </div>
   )
+}
+
+
+function getBubbleLayout(total) {
+  if (total <= 6) {
+    return { size: 'clamp(72px, 18vw, 112px)', emojiSize: 'clamp(28px, 7.4vw, 42px)', labelSize: 'clamp(10px, 2.8vw, 12px)' }
+  }
+
+  if (total <= 8) {
+    return { size: 'clamp(62px, 15.5vw, 96px)', emojiSize: 'clamp(24px, 6.4vw, 36px)', labelSize: 'clamp(9px, 2.4vw, 11px)' }
+  }
+
+  return { size: 'clamp(52px, 13vw, 82px)', emojiSize: 'clamp(21px, 5.6vw, 31px)', labelSize: 'clamp(8px, 2.1vw, 10px)' }
+}
+
+function getBubblePosition(index, total) {
+  if (total <= 1) return { left: '50%', top: '50%', delay: '0s' }
+
+  const centerIndex = total - 1
+  if (index === centerIndex) {
+    return { left: '50%', top: '50%', delay: '.2s' }
+  }
+
+  const ringCount = Math.max(1, total - 1)
+  const angle = (-90 + (360 / ringCount) * index) * Math.PI / 180
+  const radiusX = ringCount > 7 ? 38 : 33
+  const radiusY = ringCount > 7 ? 35 : 32
+  return {
+    left: `${50 + Math.cos(angle) * radiusX}%`,
+    top: `${50 + Math.sin(angle) * radiusY}%`,
+    delay: `${(index % 6) * 0.18}s`,
+  }
 }
 
 function CustomItemModal({ initialItem, onCancel, onSave }) {
@@ -315,6 +277,7 @@ function CustomItemModal({ initialItem, onCancel, onSave }) {
 function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
   const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
+  const [feedback, setFeedback] = useState({})
   const [history] = useState(() => saveKosmoji(createKosmojiEntry(nodes, links)))
 
   const recurringItems = getRecurringItems(history)
@@ -357,18 +320,28 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
             </div>
           )}
 
-          {links.map(([a, b], i) => (
-            <div className="question-card" key={i}>
-              <strong>Résonance possible</strong>
-              <div className="pair">{formatNodePair(a, b, customItems)}</div>
-              <p>{getResonanceQuestion(a, b, customItems)}</p>
-              <div className="mini-actions">
-                <span>Ça résonne</span>
-                <span>Pas aujourd’hui</span>
-                <span>Je ne sais pas</span>
+          {links.map(([a, b, question], i) => {
+            const key = `${a}-${b}-${i}`
+            return (
+              <div className="question-card" key={key}>
+                <strong>Résonance possible</strong>
+                <div className="pair">{formatNodePair(a, b, customItems)}</div>
+                <p>{getResonanceQuestion(a, b, customItems, question)}</p>
+                <div className="mini-actions" aria-label="Répondre à cette piste">
+                  {['Ça résonne', 'Pas aujourd’hui', 'Je ne sais pas'].map(label => (
+                    <button
+                      className={feedback[key] === label ? 'selected' : ''}
+                      key={label}
+                      onClick={() => setFeedback(prev => ({ ...prev, [key]: label }))}
+                      type="button"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {recurringItems.length > 0 && (
@@ -486,24 +459,76 @@ function RecurringLandscape({ items }) {
 }
 
 function DashboardPlaceholder({ onBack }) {
+  const [history, setHistory] = useState(() => getSavedKosmoji())
+  const recurringItems = getRecurringItems(history)
+
+  function clearHistory() {
+    window.localStorage.removeItem(STORAGE_KEY)
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY)
+    setHistory([])
+  }
+
   return (
     <main className="app reveal-page">
-      <section className="reveal-card dashboard-placeholder">
+      <section className="reveal-card observatory">
         <p className="kicker">Observatoire des résonances</p>
         <h1>Collection de Kosmoji</h1>
-        <p className="soft">La navigation vers l’Observatoire est prête. Les astres, climats, satellites-refuges, besoins et constellations récurrentes pourront être branchés ici.</p>
-        <button className="primary" onClick={onBack}>Revenir au Kosmos du jour</button>
+        <p className="soft">Tes Kosmoji restent dans ce navigateur. Tu peux les relire, repérer ce qui revient et effacer la collection à tout moment.</p>
+
+        <section className="safety-card">
+          <strong>Cadre d’utilisation</strong>
+          <p>Kosmoji est un support de dialogue, pas un diagnostic ni un avis médical. En cas d’urgence ou de danger, contacte immédiatement un adulte de confiance ou un service d’urgence.</p>
+        </section>
+
+        {recurringItems.length > 0 && <RecurringLandscape items={recurringItems} />}
+
+        <section className="history-list">
+          <div className="section-heading">
+            <p className="kicker">Historique local</p>
+            <h2>{history.length} Kosmoji enregistré{history.length > 1 ? 's' : ''}</h2>
+          </div>
+
+          {history.length === 0 && <p className="soft">Aucun Kosmoji enregistré pour le moment.</p>}
+
+          {history.map(entry => (
+            <article className="history-item" key={entry.id}>
+              <time>{formatDate(entry.createdAt)}</time>
+              <div className="history-emojis">
+                {(entry.nodes || []).slice(0, 8).map(node => (
+                  <span key={`${entry.id}-${node.group}-${node.id}`}>{node.emoji}</span>
+                ))}
+              </div>
+              <small>{(entry.links || []).length} résonance{(entry.links || []).length > 1 ? 's' : ''} proposée{(entry.links || []).length > 1 ? 's' : ''}</small>
+            </article>
+          ))}
+        </section>
+
+        <div className="final-actions">
+          <button className="primary" onClick={onBack}>Revenir au Kosmos du jour</button>
+          <button className="secondary" onClick={() => exportCollection(history)} disabled={history.length === 0}>Exporter la collection</button>
+          <button className="secondary danger" onClick={clearHistory} disabled={history.length === 0}>Effacer</button>
+        </div>
       </section>
     </main>
   )
 }
 
 function Constellation({ nodes, links }) {
+  const layout = getConstellationLayout(nodes.length)
   const positioned = positionNodes(nodes)
   const posMap = Object.fromEntries(positioned.map(n => [n.id, n]))
 
   return (
-    <div className="constellation">
+    <div
+      className="constellation"
+      style={{
+        '--network-node-size': layout.nodeSize,
+        '--network-star-size': layout.starSize,
+        '--network-font-size': layout.fontSize,
+        '--network-label-size': layout.labelSize,
+        '--network-label-offset': layout.labelOffset,
+      }}
+    >
       <div className="orbit orbit-1" />
       <div className="orbit orbit-2" />
 
@@ -566,6 +591,18 @@ function Line({ from, to }) {
   )
 }
 
+function getConstellationLayout(total) {
+  if (total <= 7) {
+    return { nodeSize: '66px', starSize: '88px', fontSize: '29px', labelSize: '10px', labelOffset: '22px' }
+  }
+
+  if (total <= 11) {
+    return { nodeSize: '56px', starSize: '76px', fontSize: '25px', labelSize: '9px', labelOffset: '18px' }
+  }
+
+  return { nodeSize: '46px', starSize: '66px', fontSize: '21px', labelSize: '8px', labelOffset: '15px' }
+}
+
 function positionNodes(nodes) {
   const result = []
 
@@ -580,28 +617,21 @@ function positionNodes(nodes) {
   }
 
   const others = nodes.filter(n => n.group !== 'star')
+  const total = others.length
 
-  const slots = [
-    [50, 15],
-    [78, 25],
-    [82, 50],
-    [74, 74],
-    [50, 84],
-    [26, 74],
-    [18, 50],
-    [22, 25],
-    [36, 32],
-    [64, 32],
-    [64, 68],
-    [36, 68]
-  ]
+  others.forEach((n, i) => {
+    const innerRing = total > 10 && i >= 8
+    const itemsInRing = innerRing ? total - 8 : Math.min(total, 8)
+    const indexInRing = innerRing ? i - 8 : i
+    const radiusX = innerRing ? 25 : total > 8 ? 38 : 34
+    const radiusY = innerRing ? 24 : total > 8 ? 36 : 33
+    const angle = (-90 + (360 / itemsInRing) * indexInRing) * Math.PI / 180
 
-  others.slice(0, 12).forEach((n, i) => {
     result.push({
       ...n,
       uid: `${n.id}-${i}`,
-      x: slots[i][0],
-      y: slots[i][1]
+      x: 50 + Math.cos(angle) * radiusX,
+      y: 50 + Math.sin(angle) * radiusY
     })
   })
 
@@ -682,7 +712,9 @@ function formatNodePair(a, b, customItems) {
   )
 }
 
-function getResonanceQuestion(a, b, customItems) {
+function getResonanceQuestion(a, b, customItems, question) {
+  if (question) return question
+
   const first = findNodeLabel(a, customItems)
   const second = findNodeLabel(b, customItems)
   return `Est-ce qu’il pourrait y avoir un lien entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} aujourd’hui ?`
@@ -712,13 +744,15 @@ function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
 
   const customItem = customItems?.[step.id]
   const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
+  const maxItems = step.single ? MAX_VISIBLE_STAR_ITEMS : MAX_VISIBLE_ITEMS
+  const suggestedItems = step.items.slice(0, maxItems)
 
   if (!customItem) {
-    return [...step.items, addCustomItem]
+    return [...suggestedItems, addCustomItem]
   }
 
   return [
-    ...step.items,
+    ...suggestedItems,
     [customItem.id, customItem.emoji, customItem.label, 'custom'],
   ]
 }
@@ -770,6 +804,27 @@ function getActiveNodes(answers, customItems = {}) {
 
 function getLinks(answers) {
   const activeIds = Object.keys(answers).filter(k => answers[k] > 0)
-  return RULES.filter(([a, b]) => activeIds.includes(a) && activeIds.includes(b))
+  const activeSet = new Set(activeIds)
+  return RESONANCES
+    .filter(([a, b]) => activeSet.has(a) && activeSet.has(b))
+    .sort((left, right) => getLinkScore(right, answers) - getLinkScore(left, answers))
+}
+
+function getLinkScore([a, b], answers) {
+  return (answers[a] || 1) + (answers[b] || 1)
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
+}
+
+function exportCollection(history) {
+  const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = `kosmoji-collection-${new Date().toISOString().slice(0, 10)}.json`
+  anchor.click()
+  URL.revokeObjectURL(url)
 }
 
