@@ -126,7 +126,7 @@ export default function App() {
     <main className="app">
       <section className="top">
         <div className="brand-title">
-          <span className="brand-echo">Kosmoji</span>
+          <span className="brand-echo">ÉchoMood</span>
           <span className="brand-tag">MICADO</span>
         </div>
 
@@ -137,12 +137,12 @@ export default function App() {
         </div>
 
         {stepIndex === 0 && (
-          <p className="home-subtitle">Explorons ton vécu comme si c’était un cosmos intérieur ✨️</p>
+          <p className="home-subtitle">Explorons ton vécu comme un écho intérieur ✨️</p>
         )}
-        <p className="kosmoji-definition">Ton Kosmoji, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Il te suffit de choisir les émojis qui traduisent le mieux ce que tu ressens.</p>
+        <p className="echomood-definition">Ton ÉchoMood, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Choisis les émojis qui font écho à ce que tu ressens : ils aident à nommer, partager et explorer ce qui vibre en toi.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
-        <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton Échomood avant de terminer par ton Échollection.</p>
+        <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton ÉchoMood avant de terminer par ton Échollection.</p>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
 
@@ -163,7 +163,7 @@ export default function App() {
           onClick={() => setStepIndex(v => v + 1)}
           disabled={!canGoNext()}
         >
-          {stepIndex === STEPS.length - 1 ? 'Révéler l’Échomood' : 'Swiper'}
+          {stepIndex === STEPS.length - 1 ? 'Révéler l’ÉchoMood' : 'Swiper'}
         </button>
       </section>
 
@@ -188,7 +188,7 @@ function FlowScrollbar({ steps, currentIndex }) {
       </div>
       <div className="flow-scrollbar-labels">
         <span>Swiper</span>
-        <span>Révéler l’Échomood</span>
+        <span>Révéler l’ÉchoMood</span>
         <span>Échollection</span>
       </div>
     </div>
@@ -323,9 +323,9 @@ function CustomItemModal({ customCount, onCancel, onSave }) {
 function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
   const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
-  const [currentEntry, setCurrentEntry] = useState(() => createKosmojiEntry(nodes, links))
+  const [currentEntry, setCurrentEntry] = useState(() => createEchoMoodEntry(nodes, links))
   const [feedback, setFeedback] = useState(() => getFeedbackMap(currentEntry))
-  const [history, setHistory] = useState(() => saveKosmoji(currentEntry))
+  const [history, setHistory] = useState(() => saveEchoMood(currentEntry))
 
   const recurringItems = getRecurringItems(history)
 
@@ -336,7 +336,7 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
         ...prev,
         links: (prev.links || []).map(link => link.key === key ? { ...link, feedback: value } : link),
       }
-      setHistory(updateSavedKosmoji(updated))
+      setHistory(updateSavedEchoMood(updated))
       return updated
     })
   }
@@ -345,21 +345,21 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
     <main className="app reveal-page">
       <section className="reveal-card">
         <div className="brand-title" style={{ marginBottom: '16px' }}>
-          <span className="brand-echo" style={{ fontSize: '24px' }}>Kosmoji</span>
+          <span className="brand-echo" style={{ fontSize: '24px' }}>ÉchoMood</span>
           <span className="brand-tag" style={{ fontSize: '8px' }}>MICADO</span>
         </div>
         <section className="reveal-hero">
-          <p className="kicker">Échomood révélé</p>
-          <h1>Ton Échomood du jour</h1>
-          <p className="reveal-subtitle">Une étape de révélation courte avant de ranger cet Échomood dans ton Échollection.</p>
-          <p className="soft">Cet Échomood ne dit pas la vérité sur toi.</p>
+          <p className="kicker">ÉchoMood révélé</p>
+          <h1>Ton ÉchoMood du jour</h1>
+          <p className="reveal-subtitle">Une étape de révélation courte avant de ranger cet ÉchoMood dans ton Échollection.</p>
+          <p className="soft">Cet ÉchoMood ne dit pas la vérité sur toi.</p>
           <p className="soft">Il propose des pistes pour parler de ce que tu vis.</p>
         </section>
 
         <section className="landscape-card">
           <div className="section-heading">
             <p className="kicker">Carte visuelle</p>
-            <h2>Échomood du jour</h2>
+            <h2>ÉchoMood du jour</h2>
           </div>
           <Constellation nodes={nodes} links={links} />
           <EchoIdentity nodes={nodes} />
@@ -411,14 +411,14 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
         <section className="collection-card">
           <p className="kicker">Étape finale</p>
           <h2>Mon Échollection du mois</h2>
-          <p>Collection et observatoire sont regroupés ici : tes Kosmoji précédents, les résonances qui reviennent et ce qui évolue doucement.</p>
+          <p>Collection et observatoire sont regroupés ici : tes ÉchoMood précédents, les échos qui reviennent, les résonances qui changent et ce qui évolue doucement.</p>
           <button className="primary" onClick={onOpenDashboard}>Terminer par mon Échollection</button>
         </section>
 
         <div className="final-actions">
           <button className="primary" onClick={onOpenDashboard}>Voir mon Échollection</button>
           <button className="secondary" onClick={onReset}>Recommencer plus tard</button>
-          <button className="secondary" onClick={() => exportKosmoji(currentEntry)}>Exporter cet Échomood</button>
+          <button className="secondary" onClick={() => exportEchoMood(currentEntry)}>Exporter cet ÉchoMood</button>
         </div>
       </section>
     </main>
@@ -503,14 +503,14 @@ function EchoSummary({ nodes, links = [] }) {
 function RecurringLandscape({ items, title = 'Ce qui revient souvent' }) {
   return (
     <section className="recurring-card">
-      <p className="kicker">Collection de Kosmoji</p>
+      <p className="kicker">Collection d’ÉchoMood</p>
       <h2>{title}</h2>
       <div className="recurring-list">
         {items.map(item => (
           <div className="recurring-item" key={item.id}>
             <span>{item.emoji}</span>
             <strong>{item.label}</strong>
-            <small>présent dans {item.count} Kosmoji</small>
+            <small>présent dans {item.count} ÉchoMood</small>
           </div>
         ))}
       </div>
@@ -519,7 +519,7 @@ function RecurringLandscape({ items, title = 'Ce qui revient souvent' }) {
 }
 
 function DashboardPlaceholder({ onBack }) {
-  const [history, setHistory] = useState(() => getSavedKosmoji())
+  const [history, setHistory] = useState(() => getSavedEchoMood())
   const [activeGroup, setActiveGroup] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
   const filteredHistory = filterHistoryByGroup(history, activeGroup)
@@ -532,7 +532,7 @@ function DashboardPlaceholder({ onBack }) {
 
   function clearHistory() {
     window.localStorage.removeItem(STORAGE_KEY)
-    window.localStorage.removeItem(LEGACY_STORAGE_KEY)
+    LEGACY_STORAGE_KEYS.forEach(key => window.localStorage.removeItem(key))
     setHistory([])
     setSelectedId(null)
   }
@@ -542,17 +542,17 @@ function DashboardPlaceholder({ onBack }) {
       <section className="reveal-card observatory">
         <p className="kicker">Collection + observatoire</p>
         <h1>Mon Échollection du mois</h1>
-        <p className="soft">Le flow se termine ici : tes Kosmoji restent dans ce navigateur pour relire le mois, repérer ce qui revient, ce qui change et les ressources qui t’accompagnent.</p>
+        <p className="soft">Le flow se termine ici : tes ÉchoMood restent dans ce navigateur pour relire le mois, repérer les échos qui reviennent, les résonances qui changent et les ressources qui t’accompagnent.</p>
 
         <section className="safety-card">
           <strong>Cadre d’utilisation</strong>
-          <p>Kosmoji est un support de dialogue, pas un diagnostic ni un avis médical. Les données restent dans ce navigateur : rien n’est envoyé, tu peux exporter ou effacer à tout moment.</p>
+          <p>ÉchoMood est un support de dialogue, pas un diagnostic ni un avis médical. Les données restent dans ce navigateur : rien n’est envoyé, tu peux exporter ou effacer à tout moment.</p>
         </section>
 
         <section className="observatory-grid">
           <article className="insight-card accent">
             <p className="kicker">Vue d’ensemble</p>
-            <h2>{overview.count} Kosmoji</h2>
+            <h2>{overview.count} ÉchoMood</h2>
             <p>{overview.message}</p>
           </article>
           <article className="insight-card">
@@ -567,7 +567,7 @@ function DashboardPlaceholder({ onBack }) {
         <section className="insight-card resources-card">
           <p className="kicker">Carte des ressources</p>
           <h2>Ce qui semble t’aider</h2>
-          {resourceItems.length === 0 && <p className="soft-left">Les aides fréquentes apparaîtront ici après plusieurs Kosmoji.</p>}
+          {resourceItems.length === 0 && <p className="soft-left">Les aides fréquentes apparaîtront ici après plusieurs ÉchoMood.</p>}
           <div className="pill-cloud">
             {resourceItems.map(item => <span key={item.id}>{item.emoji} {item.label} · {item.count}</span>)}
           </div>
@@ -610,10 +610,10 @@ function DashboardPlaceholder({ onBack }) {
             ))}
           </div>
 
-          {filteredHistory.length === 0 && <p className="soft">Aucun Kosmoji enregistré pour ce filtre.</p>}
+          {filteredHistory.length === 0 && <p className="soft">Aucun ÉchoMood enregistré pour ce filtre.</p>}
 
           {filteredHistory.map(entry => (
-            <KosmojiHistoryCard
+            <EchoMoodHistoryCard
               entry={entry}
               expanded={selectedId === entry.id}
               key={entry.id}
@@ -624,7 +624,7 @@ function DashboardPlaceholder({ onBack }) {
 
 
         <div className="final-actions">
-          <button className="primary" onClick={onBack}>Revenir à l’Échomood</button>
+          <button className="primary" onClick={onBack}>Revenir à l’ÉchoMood</button>
           <button className="secondary" onClick={() => exportCollection(history)} disabled={history.length === 0}>Exporter la collection</button>
           <button className="secondary danger" onClick={clearHistory} disabled={history.length === 0}>Effacer</button>
         </div>
@@ -633,7 +633,7 @@ function DashboardPlaceholder({ onBack }) {
   )
 }
 
-function KosmojiHistoryCard({ entry, expanded, onToggle }) {
+function EchoMoodHistoryCard({ entry, expanded, onToggle }) {
   const star = getEntryGroup(entry, 'star')[0]
   const topNodes = (entry.nodes || []).filter(node => node.group !== 'star').slice(0, 8)
   const resonantCount = (entry.links || []).filter(link => link.feedback === 'Ça résonne').length
@@ -650,12 +650,12 @@ function KosmojiHistoryCard({ entry, expanded, onToggle }) {
         </span>
         <small>{(entry.links || []).length} pistes · {resonantCount} qui résonnent</small>
       </button>
-      {expanded && <KosmojiDetail entry={entry} compact />}
+      {expanded && <EchoMoodDetail entry={entry} compact />}
     </article>
   )
 }
 
-function KosmojiDetail({ entry, compact = false }) {
+function EchoMoodDetail({ entry, compact = false }) {
   const groups = GROUP_LABELS.map(group => [group, getEntryGroup(entry, group.id)]).filter(([, items]) => items.length > 0)
 
   return (
@@ -809,12 +809,12 @@ function positionNodes(nodes) {
   return result
 }
 
-const STORAGE_KEY = 'kosmoji-collection'
-const LEGACY_STORAGE_KEY = 'echomood-history'
+const STORAGE_KEY = 'echomood-collection'
+const LEGACY_STORAGE_KEYS = ['kosmoji-collection', 'echomood-history']
 
-function createKosmojiEntry(nodes, links) {
+function createEchoMoodEntry(nodes, links) {
   return {
-    id: `kosmoji-${Date.now()}`,
+    id: `echomood-${Date.now()}`,
     createdAt: new Date().toISOString(),
     nodes: nodes.map(({ id, emoji, label, group, level }) => ({ id, emoji, label, group, level })),
     links: links.map(([a, b], index) => ({
@@ -826,21 +826,22 @@ function createKosmojiEntry(nodes, links) {
   }
 }
 
-function getSavedKosmoji() {
+function getSavedEchoMood() {
   if (typeof window === 'undefined') return []
 
   try {
-    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY) || '[]')
+    const rawSaved = window.localStorage.getItem(STORAGE_KEY) || LEGACY_STORAGE_KEYS.map(key => window.localStorage.getItem(key)).find(Boolean) || '[]'
+    const saved = JSON.parse(rawSaved)
     return Array.isArray(saved) ? saved : []
   } catch {
     return []
   }
 }
 
-function saveKosmoji(entry) {
+function saveEchoMood(entry) {
   if (typeof window === 'undefined') return []
 
-  const previous = getSavedKosmoji()
+  const previous = getSavedEchoMood()
   const signature = getEntrySignature(entry)
   const withoutDuplicate = previous.filter(item => getEntrySignature(item) !== signature)
   const next = [entry, ...withoutDuplicate].slice(0, 50)
@@ -853,10 +854,10 @@ function getEntrySignature(entry) {
 }
 
 
-function updateSavedKosmoji(entry) {
+function updateSavedEchoMood(entry) {
   if (typeof window === 'undefined') return []
 
-  const previous = getSavedKosmoji()
+  const previous = getSavedEchoMood()
   const next = previous.map(item => item.id === entry.id ? entry : item)
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   return next
@@ -868,7 +869,7 @@ function getFeedbackMap(entry) {
 
 function getCollectionOverview(history) {
   if (!history.length) {
-    return { count: 0, message: 'Crée un premier Kosmoji pour commencer à voir une trace de ton vécu du moment.' }
+    return { count: 0, message: 'Crée un premier ÉchoMood pour commencer à entendre une trace de ton vécu du moment.' }
   }
 
   const first = history[history.length - 1]
@@ -876,14 +877,14 @@ function getCollectionOverview(history) {
   return {
     count: history.length,
     message: history.length === 1
-      ? 'Une première fiche est gardée localement. Les tendances apparaîtront après quelques Kosmoji.'
+      ? 'Une première fiche est gardée localement. Les tendances apparaîtront après quelques ÉchoMood.'
       : `Du ${formatDate(first.createdAt)} au ${formatDate(latest.createdAt)}, l’Échollection relie tes traces sans en faire une vérité sur toi.`,
   }
 }
 
 function getCollectionChanges(history) {
   if (history.length < 2) {
-    return { title: 'Premières traces', message: 'Après deux Kosmoji, tu verras ici ce qui apparaît, revient ou se déplace.' }
+    return { title: 'Premières traces', message: 'Après deux ÉchoMood, tu verras ici ce qui fait écho, revient ou se déplace.' }
   }
 
   const latest = history[0]
@@ -891,16 +892,16 @@ function getCollectionChanges(history) {
   const previousIds = new Set(previous.flatMap(entry => (entry.nodes || []).map(node => node.id)))
   const newItems = (latest.nodes || []).filter(node => !previousIds.has(node.id) && node.group !== 'star')
   if (newItems.length > 0) {
-    return { title: 'Nouveaux éclats', message: `${formatListWithEmoji(newItems.slice(0, 3))} apparaissent dans le dernier Kosmoji.` }
+    return { title: 'Nouveaux éclats', message: `${formatListWithEmoji(newItems.slice(0, 3))} résonnent dans le dernier ÉchoMood.` }
   }
 
   const latestSupports = getEntryGroup(latest, 'supports').length
   const averageSupports = previous.reduce((sum, entry) => sum + getEntryGroup(entry, 'supports').length, 0) / previous.length
   if (latestSupports > averageSupports) {
-    return { title: 'Plus d’aides', message: 'Ton dernier Kosmoji montre davantage d’aides que les précédents.' }
+    return { title: 'Plus d’aides', message: 'Ton dernier ÉchoMood fait entendre davantage d’aides que les précédents.' }
   }
 
-  return { title: 'Continuités douces', message: 'Le dernier Kosmoji semble surtout prolonger des éléments déjà présents dans ta collection.' }
+  return { title: 'Continuités douces', message: 'Le dernier ÉchoMood semble surtout faire écho à des éléments déjà présents dans ta collection.' }
 }
 
 function getGroupTrends(history, group) {
@@ -1001,12 +1002,12 @@ function findNodeLabel(id, customItems = {}) {
   return { emoji: '•', label: 'Résonance' }
 }
 
-function exportKosmoji(entry) {
+function exportEchoMood(entry) {
   const blob = new Blob([JSON.stringify(entry, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url
-  anchor.download = `kosmoji-${new Date().toISOString().slice(0, 10)}.json`
+  anchor.download = `echomood-${new Date().toISOString().slice(0, 10)}.json`
   anchor.click()
   URL.revokeObjectURL(url)
 }
@@ -1100,7 +1101,7 @@ function exportCollection(history) {
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url
-  anchor.download = `kosmoji-collection-${new Date().toISOString().slice(0, 10)}.json`
+  anchor.download = `echomood-collection-${new Date().toISOString().slice(0, 10)}.json`
   anchor.click()
   URL.revokeObjectURL(url)
 }

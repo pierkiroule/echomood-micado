@@ -874,7 +874,7 @@ h2 {
   }
 }
 
-/* Marque Kosmoji */
+/* Marque ÉchoMood */
 .home-subtitle {
   margin: -4px auto 12px;
   color: #dbeafe;
@@ -1291,7 +1291,7 @@ h2 {
   line-height: 1.45;
 }
 
-.kosmoji-definition {
+.echomood-definition {
   width: min(100%, 380px);
   margin: 0 auto clamp(8px, 1.8vh, 14px);
   padding: 9px 11px;
