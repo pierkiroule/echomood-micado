@@ -111,7 +111,7 @@ export default function App() {
   }
 
   if (screen === 'dashboard') {
-    return <DashboardPlaceholder onBack={() => setScreen('flow')} />
+    return <EchoCollection onBack={() => setScreen('flow')} />
   }
 
   if (stepIndex >= STEPS.length) {
@@ -138,7 +138,7 @@ export default function App() {
 
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
-        <p className="soft">Ce n’est pas un test. Avance avec Suivant : une étape après l’autre, puis révèle ton ÉchoMood avant de terminer par ton Échollection.</p>
+        <p className="soft">Ce n’est pas un test. Avance avec Suivant : une étape après l’autre, puis révèle ton ÉchoMood avant de l’ajouter à ton Échollection.</p>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
 
@@ -461,17 +461,21 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
           <RecurringLandscape items={recurringItems} />
         )}
 
-        <section className="collection-card">
-          <p className="kicker">Étape finale</p>
-          <h2>Mon Échollection du mois</h2>
-          <p>Collection et observatoire sont regroupés ici : tes ÉchoMood précédents, les échos qui reviennent, les résonances qui changent et ce qui évolue doucement.</p>
-          <button className="primary" onClick={onOpenDashboard}>Terminer par mon Échollection</button>
+        <section className="collection-card" aria-labelledby="collection-next-title">
+          <p className="kicker">Prochaine étape</p>
+          <h2 id="collection-next-title">Échollection</h2>
+          <p>Ton ÉchoMood du jour est enregistré localement. L’étape suivante est unique : ouvrir l’Échollection pour relire tes fiches, repérer les retours et garder une trace exportable.</p>
+          <div className="collection-flow" aria-label="Flow vers l’Échollection">
+            <span>1 · ÉchoMood révélé</span>
+            <span aria-hidden="true">→</span>
+            <strong>2 · Échollection</strong>
+          </div>
         </section>
 
-        <div className="final-actions">
-          <button className="primary" onClick={onOpenDashboard}>Voir mon Échollection</button>
-          <button className="secondary" onClick={onReset}>Recommencer plus tard</button>
+        <div className="final-actions reveal-actions">
+          <button className="primary" onClick={onOpenDashboard}>Ouvrir mon Échollection</button>
           <button className="secondary" onClick={() => exportEchoMood(currentEntry)}>Exporter cet ÉchoMood</button>
+          <button className="secondary" onClick={onReset}>Recommencer plus tard</button>
         </div>
       </section>
     </main>
@@ -571,7 +575,7 @@ function RecurringLandscape({ items, title = 'Ce qui revient souvent' }) {
   )
 }
 
-function DashboardPlaceholder({ onBack }) {
+function EchoCollection({ onBack }) {
   const [history, setHistory] = useState(() => getSavedEchoMood())
   const [activeGroup, setActiveGroup] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
@@ -593,14 +597,29 @@ function DashboardPlaceholder({ onBack }) {
   return (
     <main className="app reveal-page">
       <section className="reveal-card observatory">
-        <p className="kicker">Collection + observatoire</p>
+        <p className="kicker">Étape 2 · Échollection</p>
         <h1>Mon Échollection du mois</h1>
-        <p className="soft">Le flow se termine ici : tes ÉchoMood restent dans ce navigateur pour relire le mois, repérer les échos qui reviennent, les résonances qui changent et les ressources qui t’accompagnent.</p>
+        <p className="soft">Le flow est maintenant clarifié : après la révélation, un seul accès mène ici. Tes ÉchoMood restent dans ce navigateur pour relire le mois, repérer les échos qui reviennent et préparer une trace exportable.</p>
+
+        <nav className="collection-flow collection-flow-large" aria-label="Repères du flow ÉchoMood">
+          <span>Accueil</span>
+          <span aria-hidden="true">→</span>
+          <span>ÉchoMood</span>
+          <span aria-hidden="true">→</span>
+          <span>Révélation</span>
+          <span aria-hidden="true">→</span>
+          <strong>Échollection</strong>
+        </nav>
 
         <section className="safety-card">
           <strong>Cadre d’utilisation</strong>
           <p>ÉchoMood est un support de dialogue, pas un diagnostic ni un avis médical. Les données restent dans ce navigateur : rien n’est envoyé, tu peux exporter ou effacer à tout moment.</p>
         </section>
+
+        <div className="collection-section-title">
+          <p className="kicker">1 · Comprendre</p>
+          <h2>Vue globale</h2>
+        </div>
 
         <section className="observatory-grid">
           <article className="insight-card accent">
@@ -614,6 +633,11 @@ function DashboardPlaceholder({ onBack }) {
             <p>{changes.message}</p>
           </article>
         </section>
+
+        <div className="collection-section-title">
+          <p className="kicker">2 · Repérer</p>
+          <h2>Tendances et ressources</h2>
+        </div>
 
         {recurringItems.length > 0 && <RecurringLandscape items={recurringItems} title="Ce qui revient souvent" />}
 
@@ -643,6 +667,11 @@ function DashboardPlaceholder({ onBack }) {
             ))}
           </div>
         </section>
+
+        <div className="collection-section-title">
+          <p className="kicker">3 · Relire</p>
+          <h2>Journal filtrable</h2>
+        </div>
 
         <section className="history-list">
           <div className="section-heading">
@@ -677,7 +706,7 @@ function DashboardPlaceholder({ onBack }) {
 
 
         <div className="final-actions">
-          <button className="primary" onClick={onBack}>Revenir à l’ÉchoMood</button>
+          <button className="primary" onClick={onBack}>Créer un nouvel ÉchoMood</button>
           <button className="secondary" onClick={() => exportCollection(history)} disabled={history.length === 0}>Exporter la collection</button>
           <button className="secondary danger" onClick={clearHistory} disabled={history.length === 0}>Effacer</button>
         </div>
