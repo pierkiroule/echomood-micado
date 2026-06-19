@@ -1001,3 +1001,39 @@ h2 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Responsive emojis: sizes are driven by React according to visible count. */
+.bubble {
+  width: var(--bubble-size, clamp(58px, 15vw, 96px));
+  height: var(--bubble-size, clamp(58px, 15vw, 96px));
+}
+
+.bubble-emoji {
+  font-size: var(--bubble-emoji-size, clamp(24px, 6.8vw, 36px));
+}
+
+.bubble-label {
+  font-size: var(--bubble-label-size, clamp(8px, 2.3vw, 11px));
+}
+
+.c-node {
+  width: var(--network-node-size, 66px);
+  height: var(--network-node-size, 66px);
+  font-size: var(--network-font-size, 29px);
+}
+
+.c-node.central {
+  width: var(--network-star-size, 88px);
+  height: var(--network-star-size, 88px);
+  font-size: calc(var(--network-font-size, 29px) * 1.35);
+}
+
+.c-node small {
+  max-width: calc(var(--network-node-size, 66px) * 1.45);
+  transform: translateY(var(--network-label-offset, 22px));
+  font-size: var(--network-label-size, 10px);
+}
+
+.c-node.central small {
+  transform: translateY(calc(var(--network-label-offset, 22px) + 3px));
+}

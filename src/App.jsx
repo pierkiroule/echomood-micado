@@ -3,6 +3,9 @@ import './index.css'
 import { STEPS } from './data/steps'
 import { RESONANCES } from './data/resonances'
 
+const MAX_VISIBLE_ITEMS = 6
+const MAX_VISIBLE_STAR_ITEMS = 5
+
 const EMPTY_CUSTOM_ITEMS = {
   world: null,
   inside: null,
@@ -148,8 +151,17 @@ export default function App() {
 }
 
 function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
+  const layout = getBubbleLayout(items.length)
+
   return (
-    <div className="bubble-stage">
+    <div
+      className="bubble-stage"
+      style={{
+        '--bubble-size': layout.size,
+        '--bubble-emoji-size': layout.emojiSize,
+        '--bubble-label-size': layout.labelSize,
+      }}
+    >
       {items.map(([id, emoji, label, type], index) => {
         const level = step.single ? (answers.star === id ? 3 : 0) : answers[id] || 0
         const pos = getBubblePosition(index, items.length)
@@ -184,6 +196,18 @@ function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
 }
 
 
+function getBubbleLayout(total) {
+  if (total <= 6) {
+    return { size: 'clamp(72px, 18vw, 112px)', emojiSize: 'clamp(28px, 7.4vw, 42px)', labelSize: 'clamp(10px, 2.8vw, 12px)' }
+  }
+
+  if (total <= 8) {
+    return { size: 'clamp(62px, 15.5vw, 96px)', emojiSize: 'clamp(24px, 6.4vw, 36px)', labelSize: 'clamp(9px, 2.4vw, 11px)' }
+  }
+
+  return { size: 'clamp(52px, 13vw, 82px)', emojiSize: 'clamp(21px, 5.6vw, 31px)', labelSize: 'clamp(8px, 2.1vw, 10px)' }
+}
+
 function getBubblePosition(index, total) {
   if (total <= 1) return { left: '50%', top: '50%', delay: '0s' }
 
@@ -194,8 +218,8 @@ function getBubblePosition(index, total) {
 
   const ringCount = Math.max(1, total - 1)
   const angle = (-90 + (360 / ringCount) * index) * Math.PI / 180
-  const radiusX = ringCount > 8 ? 39 : 34
-  const radiusY = ringCount > 8 ? 36 : 33
+  const radiusX = ringCount > 7 ? 38 : 33
+  const radiusY = ringCount > 7 ? 35 : 32
   return {
     left: `${50 + Math.cos(angle) * radiusX}%`,
     top: `${50 + Math.sin(angle) * radiusY}%`,
@@ -490,11 +514,21 @@ function DashboardPlaceholder({ onBack }) {
 }
 
 function Constellation({ nodes, links }) {
+  const layout = getConstellationLayout(nodes.length)
   const positioned = positionNodes(nodes)
   const posMap = Object.fromEntries(positioned.map(n => [n.id, n]))
 
   return (
-    <div className="constellation">
+    <div
+      className="constellation"
+      style={{
+        '--network-node-size': layout.nodeSize,
+        '--network-star-size': layout.starSize,
+        '--network-font-size': layout.fontSize,
+        '--network-label-size': layout.labelSize,
+        '--network-label-offset': layout.labelOffset,
+      }}
+    >
       <div className="orbit orbit-1" />
       <div className="orbit orbit-2" />
 
@@ -557,6 +591,18 @@ function Line({ from, to }) {
   )
 }
 
+function getConstellationLayout(total) {
+  if (total <= 7) {
+    return { nodeSize: '66px', starSize: '88px', fontSize: '29px', labelSize: '10px', labelOffset: '22px' }
+  }
+
+  if (total <= 11) {
+    return { nodeSize: '56px', starSize: '76px', fontSize: '25px', labelSize: '9px', labelOffset: '18px' }
+  }
+
+  return { nodeSize: '46px', starSize: '66px', fontSize: '21px', labelSize: '8px', labelOffset: '15px' }
+}
+
 function positionNodes(nodes) {
   const result = []
 
@@ -571,28 +617,21 @@ function positionNodes(nodes) {
   }
 
   const others = nodes.filter(n => n.group !== 'star')
+  const total = others.length
 
-  const slots = [
-    [50, 15],
-    [78, 25],
-    [82, 50],
-    [74, 74],
-    [50, 84],
-    [26, 74],
-    [18, 50],
-    [22, 25],
-    [36, 32],
-    [64, 32],
-    [64, 68],
-    [36, 68]
-  ]
+  others.forEach((n, i) => {
+    const innerRing = total > 10 && i >= 8
+    const itemsInRing = innerRing ? total - 8 : Math.min(total, 8)
+    const indexInRing = innerRing ? i - 8 : i
+    const radiusX = innerRing ? 25 : total > 8 ? 38 : 34
+    const radiusY = innerRing ? 24 : total > 8 ? 36 : 33
+    const angle = (-90 + (360 / itemsInRing) * indexInRing) * Math.PI / 180
 
-  others.slice(0, 12).forEach((n, i) => {
     result.push({
       ...n,
       uid: `${n.id}-${i}`,
-      x: slots[i][0],
-      y: slots[i][1]
+      x: 50 + Math.cos(angle) * radiusX,
+      y: 50 + Math.sin(angle) * radiusY
     })
   })
 
@@ -705,13 +744,15 @@ function getStepItems(step, customItems = EMPTY_CUSTOM_ITEMS) {
 
   const customItem = customItems?.[step.id]
   const addCustomItem = [`add-${step.id}`, '➕', 'Autre', 'add-custom']
+  const maxItems = step.single ? MAX_VISIBLE_STAR_ITEMS : MAX_VISIBLE_ITEMS
+  const suggestedItems = step.items.slice(0, maxItems)
 
   if (!customItem) {
-    return [...step.items, addCustomItem]
+    return [...suggestedItems, addCustomItem]
   }
 
   return [
-    ...step.items,
+    ...suggestedItems,
     [customItem.id, customItem.emoji, customItem.label, 'custom'],
   ]
 }
