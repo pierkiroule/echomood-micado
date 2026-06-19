@@ -138,7 +138,7 @@ export default function App() {
 
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
-        <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton ÉchoMood avant de terminer par ton Échollection.</p>
+        <p className="soft">Ce n’est pas un test. Avance avec Suivant : une étape après l’autre, puis révèle ton ÉchoMood avant de terminer par ton Échollection.</p>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
 
@@ -159,7 +159,7 @@ export default function App() {
           onClick={() => setStepIndex(v => v + 1)}
           disabled={!canGoNext()}
         >
-          {stepIndex === STEPS.length - 1 ? 'Révéler l’ÉchoMood' : 'Swiper'}
+          {stepIndex === STEPS.length - 1 ? 'Révéler l’ÉchoMood' : 'Suivant'}
         </button>
       </section>
 
@@ -200,7 +200,7 @@ function FlowScrollbar({ steps, currentIndex }) {
         <span style={{ width: `${progress}%` }} />
       </div>
       <div className="flow-scrollbar-labels">
-        <span>Swiper</span>
+        <span>Suivant</span>
         <span>Révéler l’ÉchoMood</span>
         <span>Échollection</span>
       </div>

@@ -1312,7 +1312,7 @@ h2 {
   }
 }
 
-/* Flow simplifié : swiper, révéler, puis terminer par l'Échollection. */
+/* Flow simplifié : suivant, révéler, puis terminer par l'Échollection. */
 .flow-scrollbar {
   width: min(100%, 360px);
   margin: clamp(10px, 2vh, 16px) auto 0;
