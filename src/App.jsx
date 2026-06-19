@@ -19,17 +19,17 @@ const EMPTY_CUSTOM_ITEMS = {
 
 const FILTERS = [
   { id: 'all', label: 'Tout' },
-  { id: 'inside', label: 'Climats' },
-  { id: 'supports', label: 'Refuges' },
+  { id: 'inside', label: 'Humeur' },
+  { id: 'supports', label: 'Aides' },
   { id: 'missing', label: 'Besoins' },
-  { id: 'star', label: 'Astres' },
+  { id: 'star', label: 'Sujets' },
 ]
 
 const GROUP_LABELS = [
-  { id: 'star', label: 'Astre à explorer' },
-  { id: 'world', label: 'Astres du quotidien' },
-  { id: 'inside', label: 'Climats' },
-  { id: 'supports', label: 'Satellites-refuges' },
+  { id: 'star', label: 'Sujet à explorer' },
+  { id: 'world', label: 'Vie actuelle' },
+  { id: 'inside', label: 'Humeur' },
+  { id: 'supports', label: 'Aides' },
   { id: 'missing', label: 'Besoins' },
 ]
 
@@ -137,9 +137,9 @@ export default function App() {
         </div>
 
         {stepIndex === 0 && (
-          <p className="home-subtitle">Explorer son Kosmos intérieur</p>
+          <p className="home-subtitle">Explorer ce qui se passe en ce moment</p>
         )}
-        <p className="kosmoji-definition">Un Kosmoji, c’est ton Kosmos intérieur : ton humeur, ton vécu du moment, traduit en émojis comme un paysage intérieur.</p>
+        <p className="kosmoji-definition">Un Kosmoji, c’est ton humeur et ton vécu du moment, traduits en émojis pour en parler plus facilement.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton Échomood avant de terminer par ton Échollection.</p>
@@ -375,19 +375,18 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
           {links.length === 0 && (
             <div className="question-card">
               <strong>Question pour en parler</strong>
-              <p className="question-main">Si ton vécu du moment était un Kosmoji, il serait fait de quoi aujourd’hui ?</p>
-              <p className="question-hint">Tu peux partir d’une bulle, d’un lien, ou d’un mot qui décrit ton paysage intérieur.</p>
+              <p className="question-main">Qu’est-ce qui est central dans ta vie actuellement ?</p>
+              <p className="question-hint">Tu peux partir d’un choix, d’un lien, ou simplement d’un mot important pour toi.</p>
             </div>
           )}
 
-          {links.map(([a, b, question], i) => {
+          {links.map(([a, b], i) => {
             const key = `${a}-${b}-${i}`
             return (
               <div className="question-card" key={key}>
                 <strong>Question pour en parler</strong>
                 <div className="pair">{formatNodePair(a, b, customItems)}</div>
                 <p className="question-main">{getClearResonanceQuestion(a, b, customItems)}</p>
-                {question && <p className="question-hint">Pour préciser : {question}</p>}
                 <div className="mini-actions" aria-label="Répondre à cette piste">
                   {['Ça résonne', 'Pas aujourd’hui', 'Je ne sais pas'].map(label => (
                     <button
@@ -429,16 +428,16 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
 
 function EchoIdentity({ nodes }) {
   const groups = [
-    ['star', '✨ Astre à explorer'],
-    ['world', '🌌 Astres'],
-    ['inside', '🌀 Climats'],
-    ['supports', '🛰️ Satellites-refuges'],
+    ['star', '✨ Sujet à explorer'],
+    ['world', '🌌 Vie actuelle'],
+    ['inside', '🌀 Humeur'],
+    ['supports', '🛰️ Aides'],
     ['missing', '🧭 Besoins']
   ]
 
   return (
     <div className="identity-card">
-      <h3>Ton Kosmos intérieur</h3>
+      <h3>Ton vécu du moment</h3>
       {groups.map(([group, title]) => {
         const items = nodes.filter(n => n.group === group)
         if (!items.length) return null
@@ -473,15 +472,15 @@ function EchoSummary({ nodes, links = [] }) {
       <h2>Aujourd'hui :</h2>
 
       {world.length > 0 && (
-        <p>{formatListWithEmoji(world)} semblent occuper ton Kosmos intérieur.</p>
+        <p>{formatListWithEmoji(world)} semblent prendre de la place en ce moment.</p>
       )}
 
       {inside.length > 0 && (
-        <p>Un climat particulier traverse ce Kosmos avec {formatListWithEmoji(inside)}.</p>
+        <p>Ton humeur du moment inclut {formatListWithEmoji(inside)}.</p>
       )}
 
       {supports.length > 0 && (
-        <p>{formatListWithEmoji(supports)} apparaissent comme des satellites-refuges.</p>
+        <p>{formatListWithEmoji(supports)} apparaissent comme des aides possibles.</p>
       )}
 
       {missing.length > 0 && (
@@ -501,7 +500,7 @@ function EchoSummary({ nodes, links = [] }) {
   )
 }
 
-function RecurringLandscape({ items, title = 'Ce qui revient dans ton Kosmos intérieur' }) {
+function RecurringLandscape({ items, title = 'Ce qui revient souvent' }) {
   return (
     <section className="recurring-card">
       <p className="kicker">Collection de Kosmoji</p>
@@ -568,7 +567,7 @@ function DashboardPlaceholder({ onBack }) {
         <section className="insight-card resources-card">
           <p className="kicker">Carte des ressources</p>
           <h2>Ce qui semble t’aider</h2>
-          {resourceItems.length === 0 && <p className="soft-left">Les satellites-refuges fréquents apparaîtront ici après plusieurs Kosmoji.</p>}
+          {resourceItems.length === 0 && <p className="soft-left">Les aides fréquentes apparaîtront ici après plusieurs Kosmoji.</p>}
           <div className="pill-cloud">
             {resourceItems.map(item => <span key={item.id}>{item.emoji} {item.label} · {item.count}</span>)}
           </div>
@@ -818,11 +817,10 @@ function createKosmojiEntry(nodes, links) {
     id: `kosmoji-${Date.now()}`,
     createdAt: new Date().toISOString(),
     nodes: nodes.map(({ id, emoji, label, group, level }) => ({ id, emoji, label, group, level })),
-    links: links.map(([a, b, question], index) => ({
+    links: links.map(([a, b], index) => ({
       a,
       b,
       question: getClearResonanceQuestionFromNodes(a, b, nodes),
-      sourceQuestion: question ? getResonanceQuestionFromNodes(a, b, nodes, question) : undefined,
       key: `${a}-${b}-${index}`,
     })),
   }
@@ -870,7 +868,7 @@ function getFeedbackMap(entry) {
 
 function getCollectionOverview(history) {
   if (!history.length) {
-    return { count: 0, message: 'Crée un premier Kosmoji pour commencer à voir une trace de ton Kosmos intérieur.' }
+    return { count: 0, message: 'Crée un premier Kosmoji pour commencer à voir une trace de ton vécu du moment.' }
   }
 
   const first = history[history.length - 1]
@@ -899,7 +897,7 @@ function getCollectionChanges(history) {
   const latestSupports = getEntryGroup(latest, 'supports').length
   const averageSupports = previous.reduce((sum, entry) => sum + getEntryGroup(entry, 'supports').length, 0) / previous.length
   if (latestSupports > averageSupports) {
-    return { title: 'Plus de refuges', message: 'Ton dernier Kosmoji montre davantage de satellites-refuges que les précédents.' }
+    return { title: 'Plus d’aides', message: 'Ton dernier Kosmoji montre davantage d’aides que les précédents.' }
   }
 
   return { title: 'Continuités douces', message: 'Le dernier Kosmoji semble surtout prolonger des éléments déjà présents dans ta collection.' }
@@ -948,13 +946,7 @@ function getEntryGroup(entry, group) {
 function getClearResonanceQuestionFromNodes(a, b, nodes) {
   const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
   const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
-  return `Si ton vécu du moment était un Kosmoji, quel lien ferait-il entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} ?`
-}
-
-function getResonanceQuestionFromNodes(a, b, nodes, question) {
-  if (question) return question
-
-  return getClearResonanceQuestionFromNodes(a, b, nodes)
+  return `Quel lien fais-tu entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} en ce moment ?`
 }
 
 
@@ -997,7 +989,7 @@ function formatNodePair(a, b, customItems) {
 function getClearResonanceQuestion(a, b, customItems) {
   const first = findNodeLabel(a, customItems)
   const second = findNodeLabel(b, customItems)
-  return `Si ton vécu du moment était un Kosmoji, quel lien ferait-il entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} ?`
+  return `Quel lien fais-tu entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} en ce moment ?`
 }
 
 
