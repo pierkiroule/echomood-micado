@@ -82,9 +82,12 @@ export default function App() {
 
     setAnswers(prev => {
       const next = ((prev[id] || 0) + 1) % 4
-      if (soundEnabled && next > 0) {
+      const shouldTriggerPulse = soundEnabled && next > 0
+
+      if (shouldTriggerPulse) {
         triggerEmojiPulse(id, next)
       }
+
       return { ...prev, [id]: next }
     })
   }
