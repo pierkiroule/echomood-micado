@@ -74,13 +74,17 @@ export default function App() {
   function toggle(id) {
     if (current.single) {
       setAnswers(prev => ({ ...prev, star: id }))
-      triggerEmojiPulse(id, 3)
+      if (soundEnabled) {
+        triggerEmojiPulse(id, 3)
+      }
       return
     }
 
     setAnswers(prev => {
       const next = ((prev[id] || 0) + 1) % 4
-      triggerEmojiPulse(id, next || 1)
+      if (soundEnabled && next > 0) {
+        triggerEmojiPulse(id, next)
+      }
       return { ...prev, [id]: next }
     })
   }
