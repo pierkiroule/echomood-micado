@@ -1,6 +1,6 @@
-# Kosmoji MICADO
+# ÉchoMood
 
-Kosmoji MICADO est une application React/Vite qui aide une personne à représenter son « Kosmos intérieur » du jour à travers des astres, des climats émotionnels, des satellites-refuges, des besoins et une résonance à explorer.
+ÉchoMood est une application React/Vite qui aide une personne à représenter son « écho intérieur » du jour à travers des astres, des climats émotionnels, des satellites-refuges, des besoins et une résonance à explorer.
 
 L'application est pensée comme un support de dialogue : elle ne pose pas de diagnostic, ne remplace pas un professionnel de santé et ne prétend pas dire la vérité sur l'utilisateur.
 
@@ -11,9 +11,9 @@ L'application est pensée comme un support de dialogue : elle ne pose pas de dia
 - Ajout d'une bulle personnalisée par étape.
 - Révélation d'une constellation du jour.
 - Questions de résonance issues d'une banque dédiée.
-- Collection locale des Kosmoji précédents.
+- Collection locale des ÉchoMood précédents.
 - Observatoire avec récurrences, historique local, export et effacement.
-- Export JSON d'un Kosmoji ou de la collection.
+- Export JSON d'un ÉchoMood ou de la collection.
 
 ## Confidentialité
 
@@ -21,7 +21,7 @@ Les données sont stockées uniquement dans le navigateur via `localStorage`. Au
 
 ## Cadre d'utilisation
 
-Kosmoji est un support d'expression et de discussion. En cas d'urgence, de danger ou de détresse importante, il faut contacter immédiatement un adulte de confiance, un professionnel ou un service d'urgence.
+ÉchoMood est un support d'expression et de discussion. En cas d'urgence, de danger ou de détresse importante, il faut contacter immédiatement un adulte de confiance, un professionnel ou un service d'urgence.
 
 ## Développement
 
