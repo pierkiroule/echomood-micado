@@ -16,6 +16,24 @@ const EMPTY_CUSTOM_ITEMS = {
   star: [],
 }
 
+
+const FILTERS = [
+  { id: 'all', label: 'Tout' },
+  { id: 'inside', label: 'Climats' },
+  { id: 'supports', label: 'Refuges' },
+  { id: 'missing', label: 'Besoins' },
+  { id: 'star', label: 'Astres' },
+]
+
+const GROUP_LABELS = [
+  { id: 'star', label: 'Astre à explorer' },
+  { id: 'world', label: 'Astres du quotidien' },
+  { id: 'inside', label: 'Climats' },
+  { id: 'supports', label: 'Satellites-refuges' },
+  { id: 'missing', label: 'Besoins' },
+]
+
+
 export default function App() {
   const [screen, setScreen] = useState('flow')
   const [stepIndex, setStepIndex] = useState(0)
@@ -286,10 +304,23 @@ function CustomItemModal({ customCount, onCancel, onSave }) {
 function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
   const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
-  const [feedback, setFeedback] = useState({})
-  const [history] = useState(() => saveKosmoji(createKosmojiEntry(nodes, links)))
+  const [currentEntry, setCurrentEntry] = useState(() => createKosmojiEntry(nodes, links))
+  const [feedback, setFeedback] = useState(() => getFeedbackMap(currentEntry))
+  const [history, setHistory] = useState(() => saveKosmoji(currentEntry))
 
   const recurringItems = getRecurringItems(history)
+
+  function chooseFeedback(key, value) {
+    setFeedback(prev => ({ ...prev, [key]: value }))
+    setCurrentEntry(prev => {
+      const updated = {
+        ...prev,
+        links: (prev.links || []).map(link => link.key === key ? { ...link, feedback: value } : link),
+      }
+      setHistory(updateSavedKosmoji(updated))
+      return updated
+    })
+  }
 
   return (
     <main className="app reveal-page">
@@ -341,7 +372,7 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
                     <button
                       className={feedback[key] === label ? 'selected' : ''}
                       key={label}
-                      onClick={() => setFeedback(prev => ({ ...prev, [key]: label }))}
+                      onClick={() => chooseFeedback(key, label)}
                       type="button"
                     >
                       {label}
@@ -367,7 +398,7 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
         <div className="final-actions">
           <button className="primary" onClick={onReset}>Terminer</button>
           <button className="secondary" onClick={onOpenDashboard}>Voir ma collection</button>
-          <button className="secondary" onClick={() => exportKosmoji(nodes, links)}>Exporter ce Kosmos</button>
+          <button className="secondary" onClick={() => exportKosmoji(currentEntry)}>Exporter ce Kosmos</button>
         </div>
       </section>
     </main>
@@ -449,11 +480,11 @@ function EchoSummary({ nodes, links = [] }) {
   )
 }
 
-function RecurringLandscape({ items }) {
+function RecurringLandscape({ items, title = 'Ce qui revient dans ton Kosmos intérieur' }) {
   return (
     <section className="recurring-card">
       <p className="kicker">Collection de Kosmoji</p>
-      <h2>Ce qui revient dans ton Kosmos intérieur</h2>
+      <h2>{title}</h2>
       <div className="recurring-list">
         {items.map(item => (
           <div className="recurring-item" key={item.id}>
@@ -469,12 +500,21 @@ function RecurringLandscape({ items }) {
 
 function DashboardPlaceholder({ onBack }) {
   const [history, setHistory] = useState(() => getSavedKosmoji())
-  const recurringItems = getRecurringItems(history)
+  const [activeGroup, setActiveGroup] = useState('all')
+  const [selectedId, setSelectedId] = useState(null)
+  const filteredHistory = filterHistoryByGroup(history, activeGroup)
+  const overview = getCollectionOverview(history)
+  const recurringItems = getRecurringItems(history, 6)
+  const resourceItems = getGroupTrends(history, 'supports').slice(0, 4)
+  const needsItems = getGroupTrends(history, 'missing').slice(0, 4)
+  const changes = getCollectionChanges(history)
+  const feedbackInsights = getFeedbackInsights(history)
 
   function clearHistory() {
     window.localStorage.removeItem(STORAGE_KEY)
     window.localStorage.removeItem(LEGACY_STORAGE_KEY)
     setHistory([])
+    setSelectedId(null)
   }
 
   return (
@@ -482,35 +522,86 @@ function DashboardPlaceholder({ onBack }) {
       <section className="reveal-card observatory">
         <p className="kicker">Observatoire des résonances</p>
         <h1>Collection de Kosmoji</h1>
-        <p className="soft">Tes Kosmoji restent dans ce navigateur. Tu peux les relire, repérer ce qui revient et effacer la collection à tout moment.</p>
+        <p className="soft">Tes Kosmoji restent dans ce navigateur. Tu peux les relire, repérer ce qui revient, ce qui change et les ressources qui t’accompagnent.</p>
 
         <section className="safety-card">
           <strong>Cadre d’utilisation</strong>
-          <p>Kosmoji est un support de dialogue, pas un diagnostic ni un avis médical. En cas d’urgence ou de danger, contacte immédiatement un adulte de confiance ou un service d’urgence.</p>
+          <p>Kosmoji est un support de dialogue, pas un diagnostic ni un avis médical. Les données restent dans ce navigateur : rien n’est envoyé, tu peux exporter ou effacer à tout moment.</p>
         </section>
 
-        {recurringItems.length > 0 && <RecurringLandscape items={recurringItems} />}
+        <section className="observatory-grid">
+          <article className="insight-card accent">
+            <p className="kicker">Vue d’ensemble</p>
+            <h2>{overview.count} Kosmoji</h2>
+            <p>{overview.message}</p>
+          </article>
+          <article className="insight-card">
+            <p className="kicker">Ce qui change</p>
+            <h2>{changes.title}</h2>
+            <p>{changes.message}</p>
+          </article>
+        </section>
+
+        {recurringItems.length > 0 && <RecurringLandscape items={recurringItems} title="Ce qui revient souvent" />}
+
+        <section className="insight-card resources-card">
+          <p className="kicker">Carte des ressources</p>
+          <h2>Ce qui semble t’aider</h2>
+          {resourceItems.length === 0 && <p className="soft-left">Les satellites-refuges fréquents apparaîtront ici après plusieurs Kosmoji.</p>}
+          <div className="pill-cloud">
+            {resourceItems.map(item => <span key={item.id}>{item.emoji} {item.label} · {item.count}</span>)}
+          </div>
+          {needsItems.length > 0 && (
+            <p className="support-note">À garder en douceur : {formatListWithEmoji(needsItems.slice(0, 2))} semblent aussi demander de l’attention.</p>
+          )}
+        </section>
+
+        <section className="insight-card">
+          <p className="kicker">Questions à reprendre</p>
+          <h2>Résonances marquées</h2>
+          {feedbackInsights.length === 0 && <p className="soft-left">Quand tu réponds “Ça résonne”, “Pas aujourd’hui” ou “Je ne sais pas”, l’Observatoire gardera ces pistes pour les relire.</p>}
+          <div className="feedback-list">
+            {feedbackInsights.map(item => (
+              <div className="feedback-item" key={item.key}>
+                <strong>{item.feedback}</strong>
+                <p>{item.question}</p>
+                <small>{item.count} fois dans la collection</small>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="history-list">
           <div className="section-heading">
-            <p className="kicker">Historique local</p>
-            <h2>{history.length} Kosmoji enregistré{history.length > 1 ? 's' : ''}</h2>
+            <p className="kicker">Journal vivant</p>
+            <h2>{filteredHistory.length} fiche{filteredHistory.length > 1 ? 's' : ''} affichée{filteredHistory.length > 1 ? 's' : ''}</h2>
           </div>
 
-          {history.length === 0 && <p className="soft">Aucun Kosmoji enregistré pour le moment.</p>}
+          <div className="filter-bar" aria-label="Filtrer la collection">
+            {FILTERS.map(filter => (
+              <button
+                className={activeGroup === filter.id ? 'selected' : ''}
+                key={filter.id}
+                onClick={() => setActiveGroup(filter.id)}
+                type="button"
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
 
-          {history.map(entry => (
-            <article className="history-item" key={entry.id}>
-              <time>{formatDate(entry.createdAt)}</time>
-              <div className="history-emojis">
-                {(entry.nodes || []).slice(0, 8).map(node => (
-                  <span key={`${entry.id}-${node.group}-${node.id}`}>{node.emoji}</span>
-                ))}
-              </div>
-              <small>{(entry.links || []).length} résonance{(entry.links || []).length > 1 ? 's' : ''} proposée{(entry.links || []).length > 1 ? 's' : ''}</small>
-            </article>
+          {filteredHistory.length === 0 && <p className="soft">Aucun Kosmoji enregistré pour ce filtre.</p>}
+
+          {filteredHistory.map(entry => (
+            <KosmojiHistoryCard
+              entry={entry}
+              expanded={selectedId === entry.id}
+              key={entry.id}
+              onToggle={() => setSelectedId(selectedId === entry.id ? null : entry.id)}
+            />
           ))}
         </section>
+
 
         <div className="final-actions">
           <button className="primary" onClick={onBack}>Revenir au Kosmos du jour</button>
@@ -519,6 +610,57 @@ function DashboardPlaceholder({ onBack }) {
         </div>
       </section>
     </main>
+  )
+}
+
+function KosmojiHistoryCard({ entry, expanded, onToggle }) {
+  const star = getEntryGroup(entry, 'star')[0]
+  const topNodes = (entry.nodes || []).filter(node => node.group !== 'star').slice(0, 8)
+  const resonantCount = (entry.links || []).filter(link => link.feedback === 'Ça résonne').length
+
+  return (
+    <article className={`history-item ${expanded ? 'expanded' : ''}`}>
+      <button className="history-button" onClick={onToggle} type="button">
+        <span>
+          <time>{formatDate(entry.createdAt)}</time>
+          {star && <strong>{star.emoji} {star.label}</strong>}
+        </span>
+        <span className="history-emojis">
+          {topNodes.map(node => <span key={`${entry.id}-${node.group}-${node.id}`}>{node.emoji}</span>)}
+        </span>
+        <small>{(entry.links || []).length} pistes · {resonantCount} qui résonnent</small>
+      </button>
+      {expanded && <KosmojiDetail entry={entry} compact />}
+    </article>
+  )
+}
+
+function KosmojiDetail({ entry, compact = false }) {
+  const groups = GROUP_LABELS.map(group => [group, getEntryGroup(entry, group.id)]).filter(([, items]) => items.length > 0)
+
+  return (
+    <section className={compact ? 'entry-detail compact' : 'entry-detail'}>
+      {!compact && <p className="kicker">Fiche détaillée</p>}
+      {!compact && <h2>{formatDate(entry.createdAt)}</h2>}
+      <div className="entry-groups">
+        {groups.map(([group, items]) => (
+          <div className="entry-group" key={group.id}>
+            <strong>{group.label}</strong>
+            <div className="pill-cloud">
+              {items.map(item => <span key={`${entry.id}-${group.id}-${item.id}`}>{item.emoji} {item.label}{item.level ? ` · ${item.level}/3` : ''}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+      {(entry.links || []).length > 0 && (
+        <div className="entry-resonances">
+          <strong>Résonances proposées</strong>
+          {(entry.links || []).map(link => (
+            <p key={link.key || `${link.a}-${link.b}`}>{link.question}{link.feedback ? ` — ${link.feedback}` : ''}</p>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -654,8 +796,13 @@ function createKosmojiEntry(nodes, links) {
   return {
     id: `kosmoji-${Date.now()}`,
     createdAt: new Date().toISOString(),
-    nodes: nodes.map(({ id, emoji, label, group }) => ({ id, emoji, label, group })),
-    links: links.map(([a, b, question]) => ({ a, b, question })),
+    nodes: nodes.map(({ id, emoji, label, group, level }) => ({ id, emoji, label, group, level })),
+    links: links.map(([a, b, question], index) => ({
+      a,
+      b,
+      question: getResonanceQuestionFromNodes(a, b, nodes, question),
+      key: `${a}-${b}-${index}`,
+    })),
   }
 }
 
@@ -685,7 +832,107 @@ function getEntrySignature(entry) {
   return (entry.nodes || []).map(node => `${node.group}:${node.id}`).sort().join('|')
 }
 
-function getRecurringItems(history) {
+
+function updateSavedKosmoji(entry) {
+  if (typeof window === 'undefined') return []
+
+  const previous = getSavedKosmoji()
+  const next = previous.map(item => item.id === entry.id ? entry : item)
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+  return next
+}
+
+function getFeedbackMap(entry) {
+  return Object.fromEntries((entry.links || []).filter(link => link.feedback).map(link => [link.key, link.feedback]))
+}
+
+function getCollectionOverview(history) {
+  if (!history.length) {
+    return { count: 0, message: 'Crée un premier Kosmoji pour commencer à voir une trace de ton Kosmos intérieur.' }
+  }
+
+  const first = history[history.length - 1]
+  const latest = history[0]
+  return {
+    count: history.length,
+    message: history.length === 1
+      ? 'Une première fiche est gardée localement. Les tendances apparaîtront après quelques Kosmoji.'
+      : `Du ${formatDate(first.createdAt)} au ${formatDate(latest.createdAt)}, l’Observatoire relie tes traces sans en faire une vérité sur toi.`,
+  }
+}
+
+function getCollectionChanges(history) {
+  if (history.length < 2) {
+    return { title: 'Premières traces', message: 'Après deux Kosmoji, tu verras ici ce qui apparaît, revient ou se déplace.' }
+  }
+
+  const latest = history[0]
+  const previous = history.slice(1)
+  const previousIds = new Set(previous.flatMap(entry => (entry.nodes || []).map(node => node.id)))
+  const newItems = (latest.nodes || []).filter(node => !previousIds.has(node.id) && node.group !== 'star')
+  if (newItems.length > 0) {
+    return { title: 'Nouveaux éclats', message: `${formatListWithEmoji(newItems.slice(0, 3))} apparaissent dans le dernier Kosmoji.` }
+  }
+
+  const latestSupports = getEntryGroup(latest, 'supports').length
+  const averageSupports = previous.reduce((sum, entry) => sum + getEntryGroup(entry, 'supports').length, 0) / previous.length
+  if (latestSupports > averageSupports) {
+    return { title: 'Plus de refuges', message: 'Ton dernier Kosmoji montre davantage de satellites-refuges que les précédents.' }
+  }
+
+  return { title: 'Continuités douces', message: 'Le dernier Kosmoji semble surtout prolonger des éléments déjà présents dans ta collection.' }
+}
+
+function getGroupTrends(history, group) {
+  const counts = new Map()
+  history.forEach(entry => {
+    const seen = new Set()
+    getEntryGroup(entry, group).forEach(node => {
+      if (seen.has(node.id)) return
+      seen.add(node.id)
+      const current = counts.get(node.id) || { ...node, count: 0 }
+      counts.set(node.id, { ...current, count: current.count + 1 })
+    })
+  })
+
+  return [...counts.values()].sort((a, b) => b.count - a.count)
+}
+
+function getFeedbackInsights(history) {
+  const counts = new Map()
+  history.forEach(entry => {
+    ;(entry.links || []).forEach(link => {
+      if (!link.feedback) return
+      const key = `${link.feedback}-${link.question}`
+      const current = counts.get(key) || { ...link, count: 0 }
+      counts.set(key, { ...current, count: current.count + 1 })
+    })
+  })
+
+  return [...counts.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 4)
+}
+
+function filterHistoryByGroup(history, group) {
+  if (group === 'all') return history
+  return history.filter(entry => getEntryGroup(entry, group).length > 0)
+}
+
+function getEntryGroup(entry, group) {
+  return (entry.nodes || []).filter(node => node.group === group)
+}
+
+function getResonanceQuestionFromNodes(a, b, nodes, question) {
+  if (question) return question
+
+  const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
+  const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
+  return `Est-ce qu’il pourrait y avoir un lien entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} aujourd’hui ?`
+}
+
+
+function getRecurringItems(history, limit = 3) {
   if (!Array.isArray(history) || history.length < 2) return []
 
   const counts = new Map()
@@ -702,7 +949,7 @@ function getRecurringItems(history) {
   return [...counts.values()]
     .filter(item => item.count > 1)
     .sort((a, b) => b.count - a.count)
-    .slice(0, 3)
+    .slice(0, limit)
 }
 
 function formatListWithEmoji(items) {
@@ -737,8 +984,7 @@ function findNodeLabel(id, customItems = {}) {
   return { emoji: '•', label: 'Résonance' }
 }
 
-function exportKosmoji(nodes, links) {
-  const entry = createKosmojiEntry(nodes, links)
+function exportKosmoji(entry) {
   const blob = new Blob([JSON.stringify(entry, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
