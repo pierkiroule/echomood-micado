@@ -139,6 +139,7 @@ export default function App() {
         {stepIndex === 0 && (
           <p className="home-subtitle">Explorer son Kosmos intérieur</p>
         )}
+        <p className="kosmoji-definition">Un Kosmoji, c’est ton Kosmos intérieur : ton humeur, ton vécu du moment, traduit en émojis comme un paysage intérieur.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton Échomood avant de terminer par ton Échollection.</p>
@@ -374,8 +375,8 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
           {links.length === 0 && (
             <div className="question-card">
               <strong>Question pour en parler</strong>
-              <p className="question-main">Qu’est-ce qui te semble important dans ton Échomood aujourd’hui ?</p>
-              <p className="question-hint">Tu peux partir d’une bulle, d’un lien, ou simplement d’un mot qui reste.</p>
+              <p className="question-main">Si ton vécu du moment était un Kosmoji, il serait fait de quoi aujourd’hui ?</p>
+              <p className="question-hint">Tu peux partir d’une bulle, d’un lien, ou d’un mot qui décrit ton paysage intérieur.</p>
             </div>
           )}
 
@@ -947,7 +948,7 @@ function getEntryGroup(entry, group) {
 function getClearResonanceQuestionFromNodes(a, b, nodes) {
   const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
   const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
-  return `Entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label}, qu’est-ce qui te parle le plus aujourd’hui ?`
+  return `Si ton vécu du moment était un Kosmoji, quel lien ferait-il entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} ?`
 }
 
 function getResonanceQuestionFromNodes(a, b, nodes, question) {
@@ -996,7 +997,7 @@ function formatNodePair(a, b, customItems) {
 function getClearResonanceQuestion(a, b, customItems) {
   const first = findNodeLabel(a, customItems)
   const second = findNodeLabel(b, customItems)
-  return `Entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label}, qu’est-ce qui te parle le plus aujourd’hui ?`
+  return `Si ton vécu du moment était un Kosmoji, quel lien ferait-il entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} ?`
 }
 
 

@@ -1290,3 +1290,16 @@ h2 {
   font-size: 13px;
   line-height: 1.45;
 }
+
+.kosmoji-definition {
+  width: min(100%, 380px);
+  margin: 0 auto clamp(8px, 1.8vh, 14px);
+  padding: 9px 11px;
+  border: 1px solid rgba(103,232,249,.18);
+  border-radius: 18px;
+  background: rgba(103,232,249,.075);
+  color: #dbeafe;
+  font-size: clamp(11px, 3vw, 13px);
+  font-weight: 750;
+  line-height: 1.35;
+}
