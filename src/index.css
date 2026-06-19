@@ -129,7 +129,7 @@ h2 {
   flex: 1;
   min-height: 0;
   height: 100%;
-  margin: clamp(4px, 1.8vh, 16px) 0;
+  margin: clamp(4px, 1.8vh, 16px) 0 clamp(18px, 4vh, 34px);
   overflow: visible;
 }
 
@@ -139,23 +139,29 @@ h2 {
   top: var(--y);
   width: clamp(86px, 25vw, 124px);
   height: clamp(86px, 25vw, 124px);
-  transform: translate(-50%, -50%);
+  --bubble-scale: .88;
+  transform: translate(-50%, -50%) scale(var(--bubble-scale));
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.16);
   background:
-    radial-gradient(circle at 35% 25%, rgba(255,255,255,.18), transparent 25%),
-    rgba(15,23,42,.72);
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,.12), transparent 25%),
+    rgba(15,23,42,.56);
   color: white;
   display: grid;
   place-items: center;
   cursor: pointer;
   animation: float 8s ease-in-out infinite;
   animation-delay: var(--delay);
-  box-shadow: 0 18px 60px rgba(0,0,0,.30);
+  box-shadow: 0 10px 34px rgba(0,0,0,.20);
+  opacity: .5;
+  filter: saturate(.82);
+  transition: opacity .22s ease, filter .22s ease, box-shadow .22s ease, border-color .22s ease;
   touch-action: manipulation;
 }
 
 .bubble-add {
+  --bubble-scale: .9;
+  opacity: .72;
   border-style: dashed;
   background:
     radial-gradient(circle at 35% 25%, rgba(255,255,255,.14), transparent 25%),
@@ -166,7 +172,7 @@ h2 {
   position: relative;
   z-index: 4;
   font-size: clamp(32px, 9vw, 42px);
-  transition: transform .2s ease;
+  transition: transform .22s ease, filter .22s ease;
 }
 
 .bubble-label {
@@ -195,14 +201,34 @@ h2 {
   z-index: 1;
 }
 
-.level-1 .h1 { opacity: .46; inset: 0; }
-.level-2 .h1 { opacity: .56; inset: -2px; }
-.level-2 .h2 { opacity: .32; inset: -18px; }
+.level-1 {
+  --bubble-scale: .96;
+  opacity: .68;
+  filter: saturate(1);
+  box-shadow: 0 14px 42px rgba(0,0,0,.26), 0 0 18px color-mix(in srgb, var(--color) 18%, transparent);
+}
+.level-1 .bubble-emoji { transform: scale(1.06); }
+.level-1 .h1 { opacity: .34; inset: -1px; }
+.level-2 {
+  --bubble-scale: 1.04;
+  opacity: .86;
+  filter: saturate(1.12);
+  border-color: color-mix(in srgb, var(--color) 58%, rgba(255,255,255,.28));
+  box-shadow: 0 18px 54px rgba(0,0,0,.34), 0 0 26px color-mix(in srgb, var(--color) 30%, transparent);
+}
+.level-2 .bubble-emoji { transform: scale(1.16); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color) 44%, transparent)); }
+.level-2 .h1 { opacity: .54; inset: -3px; }
+.level-2 .h2 { opacity: .28; inset: -18px; }
 .level-3 {
+  --bubble-scale: 1.12;
+  opacity: 1;
+  filter: saturate(1.25);
   background: rgba(15,23,42,.96);
   border-color: var(--color);
+  box-shadow: 0 22px 70px rgba(0,0,0,.42), 0 0 0 7px color-mix(in srgb, var(--color) 14%, transparent), 0 0 42px color-mix(in srgb, var(--color) 42%, transparent);
+  z-index: 6;
 }
-.level-3 .bubble-emoji { transform: scale(1.16); }
+.level-3 .bubble-emoji { transform: scale(1.28); filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color) 60%, transparent)); }
 .level-3 .h1 { opacity: .75; inset: -4px; }
 .level-3 .h2 { opacity: .44; inset: -24px; }
 .level-3 .h3 { opacity: .24; inset: -46px; }
@@ -229,8 +255,9 @@ h2 {
 .nav {
   display: flex;
   gap: 12px;
-  z-index: 2;
+  z-index: 8;
   padding-top: 4px;
+  position: relative;
 }
 
 .primary, .secondary {
@@ -375,8 +402,8 @@ h2 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(1); }
-  50% { transform: translate(-50%, -50%) translateY(-16px) scale(1.02); }
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(var(--bubble-scale)); }
+  50% { transform: translate(-50%, -50%) translateY(-12px) scale(calc(var(--bubble-scale) * 1.015)); }
 }
 
 @keyframes burst {
@@ -482,7 +509,7 @@ h2 {
   }
 
   .bubble-stage {
-    margin: 0;
+    margin: 0 0 20px;
   }
 
   .primary,
@@ -987,8 +1014,8 @@ h2 {
   }
 
   .bubble {
-    width: clamp(54px, 14vw, 72px);
-    height: clamp(54px, 14vw, 72px);
+    width: clamp(48px, 12vw, 66px);
+    height: clamp(48px, 12vw, 66px);
   }
 }
 

@@ -245,14 +245,14 @@ function FloatingBubbles({ step, items, answers, onTap, onCustomTap }) {
 
 function getBubbleLayout(total) {
   if (total <= 6) {
-    return { size: 'clamp(72px, 18vw, 112px)', emojiSize: 'clamp(28px, 7.4vw, 42px)', labelSize: 'clamp(10px, 2.8vw, 12px)' }
+    return { size: 'clamp(64px, 16vw, 98px)', emojiSize: 'clamp(23px, 6.2vw, 34px)', labelSize: 'clamp(9px, 2.4vw, 11px)' }
   }
 
   if (total <= 8) {
-    return { size: 'clamp(62px, 15.5vw, 96px)', emojiSize: 'clamp(24px, 6.4vw, 36px)', labelSize: 'clamp(9px, 2.4vw, 11px)' }
+    return { size: 'clamp(56px, 14vw, 84px)', emojiSize: 'clamp(21px, 5.5vw, 30px)', labelSize: 'clamp(8px, 2.2vw, 10px)' }
   }
 
-  return { size: 'clamp(52px, 13vw, 82px)', emojiSize: 'clamp(21px, 5.6vw, 31px)', labelSize: 'clamp(8px, 2.1vw, 10px)' }
+  return { size: 'clamp(48px, 12vw, 72px)', emojiSize: 'clamp(19px, 5vw, 27px)', labelSize: 'clamp(7px, 2vw, 9px)' }
 }
 
 function getCenterBubblePosition() {
@@ -260,15 +260,15 @@ function getCenterBubblePosition() {
 }
 
 function getBubblePosition(index, total) {
-  if (total <= 1) return { left: '50%', top: '18%', delay: '0s' }
+  if (total <= 1) return { left: '50%', top: '22%', delay: '0s' }
 
   const ringCount = Math.max(1, total)
   const angle = (-90 + (360 / ringCount) * index) * Math.PI / 180
-  const radiusX = ringCount > 7 ? 39 : 34
-  const radiusY = ringCount > 7 ? 36 : 32
+  const radiusX = ringCount > 7 ? 37 : 32
+  const radiusY = ringCount > 7 ? 30 : 27
   return {
     left: `${50 + Math.cos(angle) * radiusX}%`,
-    top: `${50 + Math.sin(angle) * radiusY}%`,
+    top: `${48 + Math.sin(angle) * radiusY}%`,
     delay: `${(index % 6) * 0.18}s`,
   }
 }
