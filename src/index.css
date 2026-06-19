@@ -892,16 +892,16 @@ h2 {
 }
 
 .bubble {
-  width: clamp(58px, 15vw, 96px);
-  height: clamp(58px, 15vw, 96px);
+  width: var(--bubble-size, clamp(58px, 15vw, 96px));
+  height: var(--bubble-size, clamp(58px, 15vw, 96px));
 }
 
 .bubble-emoji {
-  font-size: clamp(24px, 6.8vw, 36px);
+  font-size: var(--bubble-emoji-size, clamp(24px, 6.8vw, 36px));
 }
 
 .bubble-label {
-  font-size: clamp(8px, 2.3vw, 11px);
+  font-size: var(--bubble-label-size, clamp(8px, 2.3vw, 11px));
 }
 
 .mini-actions button {
