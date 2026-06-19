@@ -3,7 +3,8 @@ export const STEPS = [
     id: 'world',
     label: 'Vie actuelle',
     color: '#60a5fa',
-    title: "Qu'est-ce qui est central dans ta vie actuellement ?",
+    title: "Qu'est-ce qui occupe le centre de ton Kosmos aujourd’hui ?",
+    description: "Choisis les astres qui attirent ton attention. Ils ne définissent pas toute ta vie : ils indiquent seulement où ton histoire demande peut-être à être regardée.",
     items: [
       ['home', '🏠', 'Famille'],
       ['school', '🏫', 'École'],
@@ -23,7 +24,8 @@ export const STEPS = [
     id: 'inside',
     label: 'Humeur',
     color: '#fb7185',
-    title: "Comment te sens-tu en ce moment ?",
+    title: "Quelle météo traverse ton monde intérieur ?",
+    description: "Tu peux sélectionner plusieurs climats, même s’ils semblent se contredire. Une humeur peut être un nuage, une vague, une étincelle ou une ombre de passage.",
     items: [
       ['anger', '😡', 'Colère'],
       ['fear', '😰', 'Peur'],
@@ -43,7 +45,8 @@ export const STEPS = [
     id: 'supports',
     label: 'Aides',
     color: '#4ade80',
-    title: "Qu'est-ce qui t'aide ou te soutient actuellement ?",
+    title: "Quels refuges t’aident à tenir, respirer ou imaginer ?",
+    description: "Repère les petits satellites qui te soutiennent : une personne, un geste, un lieu, une activité, un silence. Même minuscule, un refuge compte.",
     items: [
       ['support', '🤝', 'Soutien'],
       ['music', '🎵', 'Musique'],
@@ -63,7 +66,8 @@ export const STEPS = [
     id: 'missing',
     label: 'Besoins',
     color: '#c084fc',
-    title: "De quoi aurais-tu besoin aujourd'hui ?",
+    title: "De quoi ton Kosmos aurait-il besoin aujourd’hui ?",
+    description: "Choisis ce qui manque, ce qui appellerait du soin, ou ce qui pourrait rendre la journée un peu plus habitable.",
     items: [
       ['calm', '🕊️', 'Calme'],
       ['hope', '🌈', 'Espoir'],
@@ -83,7 +87,8 @@ export const STEPS = [
     id: 'star',
     label: 'Sujet à explorer',
     color: '#facc15',
-    title: "Quel sujet aimerais-tu explorer ensemble ?",
+    title: "Quelle étoile aimerais-tu explorer ensemble ?",
+    description: "Cette étoile sert de point de départ pour parler, rêver, questionner ou chercher un petit pas possible.",
     single: true,
     items: [
       ['spark', '✨', 'Élan'],

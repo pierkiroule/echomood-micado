@@ -142,6 +142,7 @@ export default function App() {
         <p className="kosmoji-definition">Un Kosmoji, c’est ton humeur et ton vécu du moment, traduits en émojis pour en parler plus facilement.</p>
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
+        {current.description && <p className="soft">{current.description}</p>}
         <p className="soft">Ce n’est pas un test. Avance comme dans un swipe : une étape après l’autre, puis révèle ton Échomood avant de terminer par ton Échollection.</p>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
@@ -386,7 +387,8 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
               <div className="question-card" key={key}>
                 <strong>Question pour en parler</strong>
                 <div className="pair">{formatNodePair(a, b, customItems)}</div>
-                <p className="question-main">{getClearResonanceQuestion(a, b, customItems)}</p>
+                <p className="question-main">{getResonancePrompt(a, b, customItems).question}</p>
+                <p className="question-hint">{getResonancePrompt(a, b, customItems).hint}</p>
                 <div className="mini-actions" aria-label="Répondre à cette piste">
                   {['Ça résonne', 'Pas aujourd’hui', 'Je ne sais pas'].map(label => (
                     <button
@@ -820,7 +822,7 @@ function createKosmojiEntry(nodes, links) {
     links: links.map(([a, b], index) => ({
       a,
       b,
-      question: getClearResonanceQuestionFromNodes(a, b, nodes),
+      question: getResonancePromptFromNodes(a, b, nodes).question,
       key: `${a}-${b}-${index}`,
     })),
   }
@@ -943,10 +945,10 @@ function getEntryGroup(entry, group) {
   return (entry.nodes || []).filter(node => node.group === group)
 }
 
-function getClearResonanceQuestionFromNodes(a, b, nodes) {
+function getResonancePromptFromNodes(a, b, nodes) {
   const first = nodes.find(node => node.id === a) || { emoji: '•', label: 'Résonance' }
   const second = nodes.find(node => node.id === b) || { emoji: '•', label: 'Résonance' }
-  return `Quel lien fais-tu entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} en ce moment ?`
+  return buildResonancePrompt(a, b, first, second)
 }
 
 
@@ -986,10 +988,38 @@ function formatNodePair(a, b, customItems) {
   )
 }
 
-function getClearResonanceQuestion(a, b, customItems) {
+function getResonancePrompt(a, b, customItems) {
   const first = findNodeLabel(a, customItems)
   const second = findNodeLabel(b, customItems)
-  return `Quel lien fais-tu entre ${first.emoji} ${first.label} et ${second.emoji} ${second.label} en ce moment ?`
+  return buildResonancePrompt(a, b, first, second)
+}
+
+function buildResonancePrompt(a, b, first, second) {
+  const curatedQuestion = findCuratedResonanceQuestion(a, b)
+  const fallbackQuestion = `Si ${first.emoji} ${first.label} et ${second.emoji} ${second.label} étaient deux personnages de ton monde intérieur, que se diraient-ils aujourd’hui ?`
+
+  return {
+    question: curatedQuestion || fallbackQuestion,
+    hint: getResonanceHint(a, b, first, second),
+  }
+}
+
+function findCuratedResonanceQuestion(a, b) {
+  const match = RESONANCES.find(([left, right]) => (left === a && right === b) || (left === b && right === a))
+  return match?.[2]
+}
+
+function getResonanceHint(a, b, first, second) {
+  const seed = `${a}-${b}`.split('').reduce((total, char) => total + char.charCodeAt(0), 0)
+  const hints = [
+    `Tu peux répondre par une image, une couleur, un lieu imaginaire ou une mini-scène entre ${first.label} et ${second.label}.`,
+    `Imagine que ce lien est une météo intérieure : quel temps fait-il, et qu’est-ce qui pourrait l’adoucir d’un degré ?`,
+    `Il n’y a pas de bonne réponse : cherche plutôt le détail, le souvenir ou la sensation qui apparaît en premier.`,
+    `Si c’était une porte, une clé, un chemin ou une montagne, lequel choisirais-tu pour raconter ce lien ?`,
+    `Tu peux inventer une métaphore : “ça ressemble à…”, “ça pèse comme…”, “ça protège comme…”.`,
+  ]
+
+  return hints[seed % hints.length]
 }
 
 
