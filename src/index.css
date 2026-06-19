@@ -1589,3 +1589,22 @@ h2 {
   font-weight: 750;
   line-height: 1.35;
 }
+
+.sound-toggle {
+  align-self: center;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.78);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  padding: 7px 12px;
+}
+
+.sound-toggle:hover,
+.sound-toggle:focus-visible {
+  background: rgba(255,255,255,.12);
+  color: white;
+}

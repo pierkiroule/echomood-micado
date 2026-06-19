@@ -1,7 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './index.css'
 import { STEPS } from './data/steps'
 import { RESONANCES } from './data/resonances'
+import {
+  disposeSound,
+  initAudio,
+  startSound,
+  stopSound,
+  triggerEmojiPulse,
+  updateSoundFromAnswers,
+} from './audio/echoSoundEngine'
 
 const MAX_VISIBLE_ITEMS = 6
 const MAX_VISIBLE_STAR_ITEMS = 5
@@ -40,16 +48,39 @@ export default function App() {
   const [answers, setAnswers] = useState({})
   const [customItems, setCustomItems] = useState(EMPTY_CUSTOM_ITEMS)
   const [customModalStep, setCustomModalStep] = useState(null)
+  const [soundEnabled, setSoundEnabled] = useState(false)
   const current = STEPS[stepIndex]
+
+  useEffect(() => {
+    updateSoundFromAnswers(answers, current)
+  }, [answers, current])
+
+  useEffect(() => () => disposeSound(), [])
+
+  async function handleSoundToggle() {
+    const nextSoundEnabled = !soundEnabled
+
+    await initAudio()
+
+    if (nextSoundEnabled) {
+      await startSound()
+    } else {
+      stopSound()
+    }
+
+    setSoundEnabled(nextSoundEnabled)
+  }
 
   function toggle(id) {
     if (current.single) {
       setAnswers(prev => ({ ...prev, star: id }))
+      triggerEmojiPulse(id, 3)
       return
     }
 
     setAnswers(prev => {
       const next = ((prev[id] || 0) + 1) % 4
+      triggerEmojiPulse(id, next || 1)
       return { ...prev, [id]: next }
     })
   }
@@ -59,6 +90,8 @@ export default function App() {
     setAnswers({})
     setCustomItems(EMPTY_CUSTOM_ITEMS)
     setCustomModalStep(null)
+    setSoundEnabled(false)
+    stopSound()
     setScreen('home')
   }
 
@@ -139,6 +172,9 @@ export default function App() {
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance avec Suivant : une étape après l’autre, puis révèle ton ÉchoMood avant de l’ajouter à ton Échollection.</p>
+        <button className="sound-toggle" onClick={handleSoundToggle} type="button">
+          {soundEnabled ? 'Son on' : 'Son off'}
+        </button>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
 
