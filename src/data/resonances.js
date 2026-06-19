@@ -1,6 +1,6 @@
 export const RESONANCES = [
   // --- Astres (world) x Climats (inside) ---
-  ['home', 'anger', "Quand la colère traverse le Kosmos, quelle place prend la famille ?"],
+  ['home', 'anger', "Quand la colère est présente, quelle place prend la famille ?"],
   ['home', 'sad', "Comment la tristesse modifie-t-elle l'ambiance de ta chambre ?"],
   ['home', 'tension', "Où se loge la tension quand tu franchis le seuil de la maison ?"],
   ['home', 'peace', "Qu'est-ce qui, chez toi, permet parfois de retrouver un peu de paix ?"],
@@ -31,7 +31,7 @@ export const RESONANCES = [
   ['future', 'hope', "Quelle petite lueur d'espoir parviens-tu à imaginer pour demain ?"],
 
   // --- Astres x Satellites-refuges (supports) ---
-  ['home', 'support', "Vers qui te tournes-tu à la maison quand le Kosmos devient trop dur ?"],
+  ['home', 'support', "Vers qui te tournes-tu à la maison quand ce que tu vis devient trop dur ?"],
   ['school', 'talk', "Y a-t-il une personne à qui tu pourrais parler de ce que tu traverses à l'école ?"],
   ['friends', 'music', "Quelle musique partagez-vous quand vous avez besoin de vous évader ?"],
   ['phone', 'game', "Le jeu vidéo est-il pour toi un pont vers les autres ou une bulle de protection ?"],
@@ -108,7 +108,7 @@ export const RESONANCES = [
   ['joy', 'creativity', "Comment ta joie s'exprime-t-elle dans ce que tu crées ?"],
   ['tension', 'meditation', "La respiration ou la méditation aident-elles à relâcher la tension ?"],
   ['worry', 'talk', "Parler de tes inquiétudes les rend-elles plus légères ou plus réelles ?"],
-  ['peace', 'nature', "Quel Kosmos de nature te procure le plus de paix ?"],
+  ['peace', 'nature', "Quel endroit dans la nature te procure le plus de paix ?"],
   ['shame', 'pet', "Un animal peut-il aider à traverser les moments de honte ?"],
   ['guilt', 'dream', "Tes rêves expriment-ils parfois la culpabilité que tu ressens le jour ?"],
   ['tired', 'sleep_refuge', "Ton lit est-il le seul endroit où tu acceptes d'être fatigué ?"],
@@ -183,7 +183,7 @@ export const RESONANCES = [
   ['anger', 'write', "L'écriture peut-elle contenir toute la force de ta colère ?"],
   ['fear', 'meditation', "Est-ce que respirer aide à faire face à la peur ?"],
   ['sad', 'pet', "Ton animal sent-il quand tu es triste ?"],
-  ['empty', 'nature', "Le vide est-il moins lourd quand tu es face à un grand Kosmos ?"],
+  ['empty', 'nature', "Le vide est-il moins lourd quand tu es face à un grand espace ?"],
   ['joy', 'talk', "Avec qui aimes-tu partager tes moments de joie ?"],
   ['tension', 'music', "Quelle musique aide à relâcher la pression ?"],
   ['worry', 'sport', "Le sport permet-il de mettre tes soucis de côté un instant ?"],
@@ -286,7 +286,7 @@ export const RESONANCES = [
   ['solitude', 'thoughts', "Tes pensées sont-elles plus bruyantes quand tu es seul ?"],
   ['hospital', 'body', "Comment ton corps s'adapte-t-il au rythme de l'hôpital ?"],
   ['hobbies', 'phone', "Utilises-tu ton téléphone pour nourrir tes passions ?"],
-  ['future', 'friends', "Où seront tes amis dans le Kosmos de ton futur ?"],
+  ['future', 'friends', "Où seront tes amis dans ton futur ?"],
   ['home', 'sleep', "Dors-tu mieux chez toi ou ailleurs ?"],
   ['anger', 'shame', "La colère laisse-t-elle parfois place à la honte ?"],
   ['fear', 'sad', "La peur et la tristesse se mélangent-elles parfois en toi ?"],

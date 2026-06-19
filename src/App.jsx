@@ -351,15 +351,15 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
         <section className="reveal-hero">
           <p className="kicker">Échomood révélé</p>
           <h1>Ton Échomood du jour</h1>
-          <p className="reveal-subtitle">Une étape de révélation courte avant de ranger ce Kosmos dans ton Échollection.</p>
-          <p className="soft">Ce Kosmos ne dit pas la vérité sur toi.</p>
-          <p className="soft">Il propose des pistes pour parler de ce qui résonne.</p>
+          <p className="reveal-subtitle">Une étape de révélation courte avant de ranger cet Échomood dans ton Échollection.</p>
+          <p className="soft">Cet Échomood ne dit pas la vérité sur toi.</p>
+          <p className="soft">Il propose des pistes pour parler de ce que tu vis.</p>
         </section>
 
         <section className="landscape-card">
           <div className="section-heading">
             <p className="kicker">Carte visuelle</p>
-            <h2>Kosmos du jour</h2>
+            <h2>Échomood du jour</h2>
           </div>
           <Constellation nodes={nodes} links={links} />
           <EchoIdentity nodes={nodes} />
@@ -418,7 +418,7 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
         <div className="final-actions">
           <button className="primary" onClick={onOpenDashboard}>Voir mon Échollection</button>
           <button className="secondary" onClick={onReset}>Recommencer plus tard</button>
-          <button className="secondary" onClick={() => exportKosmoji(currentEntry)}>Exporter ce Kosmos</button>
+          <button className="secondary" onClick={() => exportKosmoji(currentEntry)}>Exporter cet Échomood</button>
         </div>
       </section>
     </main>
