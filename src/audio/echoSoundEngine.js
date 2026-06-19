@@ -214,9 +214,6 @@ export function updateSoundFromAnswers(answers = {}, currentStep = null) {
   rampVolume(climate, -45 + Math.min(6, averageLevel * 1.8), 2.5)
   rampVolume(bass, -37 + Math.min(5, averageLevel * 1.5), 2.5)
 
-  if (playing && currentDroneNotes.length > 0) {
-    drone.triggerAttackRelease(currentDroneNotes, '1m', getSafeNow(0.2), 0.16)
-  }
 }
 
 export function triggerEmojiPulse(id, level = 1) {
