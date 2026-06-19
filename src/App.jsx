@@ -178,13 +178,55 @@ export default function App() {
 function HomeScreen({ onStart }) {
   return (
     <main className="app home-page">
-      <section className="home-card">
-        <div className="brand-title home-brand">
-          <span className="brand-echo">ÉchoMood</span>
+      <div className="home-aurora" aria-hidden="true" />
+      <div className="home-orbit home-orbit-one" aria-hidden="true">💫</div>
+      <div className="home-orbit home-orbit-two" aria-hidden="true">🌈</div>
+      <div className="home-orbit home-orbit-three" aria-hidden="true">🫧</div>
+
+      <section className="home-hero" aria-labelledby="home-title">
+        <div className="home-eyebrow">
+          <span className="home-eyebrow-dot" />
+          Espace d’écoute émotionnelle
         </div>
-        <p className="home-subtitle">Explorons ton vécu comme un écho intérieur ✨️</p>
-        <p className="echomood-definition">Ton ÉchoMood, c’est ton ressenti du moment, ton vécu perso, ce qui résonne pour toi dans ta vie quotidienne. Choisis les émojis qui font écho à ce que tu ressens : ils aident à nommer, partager et explorer ce qui vibre en toi.</p>
-        <button className="primary home-start" onClick={onStart} type="button">Commencer</button>
+
+        <div className="brand-title home-brand" id="home-title">
+          <span className="brand-echo home-brand-word">ÉchoMood</span>
+          <span className="home-brand-spark" aria-hidden="true">✨</span>
+        </div>
+
+        <p className="home-subtitle">Transforme ton ressenti du moment en constellation claire, douce et actionnable.</p>
+
+        <div className="home-intro">
+          <p>
+            ÉchoMood t’aide à faire le point sans jugement : tu sélectionnes les émojis qui résonnent avec ta vie actuelle, ton humeur, tes appuis et tes besoins.
+          </p>
+          <p>
+            En quelques étapes, l’accueil de tes émotions devient plus simple : tu nommes ce qui se passe, tu repères ce qui t’aide, puis tu obtiens une synthèse visuelle pour mieux te comprendre ou en parler.
+          </p>
+        </div>
+
+        <div className="home-steps" aria-label="Déroulé de l’expérience ÉchoMood">
+          <article>
+            <span aria-hidden="true">🧭</span>
+            <strong>Explorer</strong>
+            <p>Choisis ce qui fait écho à ton vécu aujourd’hui.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">🎧</span>
+            <strong>Écouter</strong>
+            <p>Observe les intensités et les nuances qui émergent.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">🌟</span>
+            <strong>Révéler</strong>
+            <p>Découvre ton ÉchoMood et des pistes concrètes.</p>
+          </article>
+        </div>
+
+        <button className="primary home-start" onClick={onStart} type="button">
+          Commencer mon ÉchoMood
+          <span aria-hidden="true">→</span>
+        </button>
       </section>
     </main>
   )
@@ -1116,4 +1158,3 @@ function exportCollection(history) {
   anchor.click()
   URL.revokeObjectURL(url)
 }
-
