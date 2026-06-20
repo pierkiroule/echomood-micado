@@ -190,8 +190,9 @@ export default function App() {
         <p className="kicker">{current.label}</p>
         <h1>{current.title}</h1>
         <p className="soft">Ce n’est pas un test. Avance avec Suivant : une étape après l’autre, puis révèle ton ÉchoMood avant de l’ajouter à ton Échollection.</p>
+        <p className="soft">Active le paysage sonore : chaque émoji choisi ajoute une couche douce, profonde et reliée à tes résonances.</p>
         <button className="sound-toggle" onClick={handleSoundToggle} type="button">
-          {soundEnabled ? 'Son on' : 'Son off'}
+          {soundEnabled ? 'Paysage sonore on' : 'Paysage sonore off'}
         </button>
         <FlowScrollbar steps={STEPS} currentIndex={stepIndex} />
       </section>
@@ -268,7 +269,7 @@ function HomeScreen({ onStart }) {
           <article>
             <span aria-hidden="true">🎧</span>
             <strong>Écouter</strong>
-            <p>Observe les intensités et les nuances qui émergent.</p>
+            <p>Écoute un paysage relaxant se composer à partir de tes choix.</p>
           </article>
           <article>
             <span aria-hidden="true">🌟</span>
