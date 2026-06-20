@@ -168,6 +168,10 @@ export default function App() {
         customItems={customItems}
         onReset={reset}
         onOpenDashboard={() => setScreen('dashboard')}
+        onStopSound={() => {
+          stopSound()
+          setSoundEnabled(false)
+        }}
       />
     )
   }
@@ -424,7 +428,7 @@ function CustomItemModal({ customCount, onCancel, onSave }) {
   )
 }
 
-function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
+function Reveal({ answers, customItems, onReset, onOpenDashboard, onStopSound }) {
   const nodes = getActiveNodes(answers, customItems)
   const links = getLinks(answers).slice(0, 3)
   const [currentEntry, setCurrentEntry] = useState(() => createEchoMoodEntry(nodes, links))
@@ -524,6 +528,7 @@ function Reveal({ answers, customItems, onReset, onOpenDashboard }) {
 
         <div className="final-actions reveal-actions">
           <button className="primary" onClick={onOpenDashboard}>Ouvrir mon Échollection</button>
+          <button className="secondary" onClick={onStopSound}>Stop son</button>
           <button className="secondary" onClick={() => exportEchoMood(currentEntry)}>Exporter cet ÉchoMood</button>
           <button className="secondary" onClick={onReset}>Recommencer plus tard</button>
         </div>
